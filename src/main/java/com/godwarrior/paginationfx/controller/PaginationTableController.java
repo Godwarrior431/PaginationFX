@@ -1,18 +1,20 @@
 package com.godwarrior.paginationfx.controller;
 
-import javafx.beans.property.SimpleObjectProperty;
+import com.godwarrior.paginationfx.connection.mysql.ConnectionMSQL;
+import com.godwarrior.paginationfx.connection.mysql.MySQLSelect;
+import com.godwarrior.paginationfx.models.Usuario;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
 
 import java.lang.reflect.Field;
 
-public class FilterTableViewController<T> {
+public class PaginationTableController<T> {
 
-    private final T object;
-    private final String dataBaseName;
+    private T object;
+    private String dataBaseName;
 
     private String query;
 
@@ -23,7 +25,7 @@ public class FilterTableViewController<T> {
     private ImageView filterImgView , resetFilterImgView;
 
     @FXML
-    private TableView<T> filterTableView;
+    private TableView<T> filterTableView = new TableView<>();
 
     @FXML
     private Button goBackPageButton, goNextPageButton;
@@ -34,10 +36,20 @@ public class FilterTableViewController<T> {
     @FXML
     private ComboBox<Integer> pageSelectComboBox;
 
-    public FilterTableViewController(T object, String dataBaseName) {
+    public void initialize(T object, String dataBaseName) {
         this.object = object;
         this.dataBaseName = dataBaseName;
 
+        ConnectionMSQL.getInstance("localhost", "paginationtest", "root", "");
+
+        query = "SELECT * FROM usuario";
+
+        this.addColumn("Identificador" , "id");
+        this.addColumn("Nombre", "name");
+        this.addColumn("Apellido" ,"telefono");
+
+        // Set the items in the TableView
+        this.filterTableView.setItems((ObservableList<T>) MySQLSelect.executeQuery(query, Usuario.class));
     }
 
     public String getQuery() {
@@ -52,7 +64,9 @@ public class FilterTableViewController<T> {
         TableColumn<T, String> column = new TableColumn<>(columnName);
         column.setCellValueFactory(cellData -> {
             try {
-                return new SimpleStringProperty(String.valueOf(cellData.getValue().getClass().getDeclaredField(attributeName).get(cellData.getValue())));
+                Field field = cellData.getValue().getClass().getDeclaredField(attributeName);
+                field.setAccessible(true);  // Make the field accessible
+                return new SimpleStringProperty(String.valueOf(field.get(cellData.getValue())));
             } catch (IllegalAccessException | NoSuchFieldException e) {
                 e.printStackTrace();
                 return new SimpleStringProperty("Error");

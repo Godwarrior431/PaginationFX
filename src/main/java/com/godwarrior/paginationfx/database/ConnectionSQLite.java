@@ -1,4 +1,4 @@
-package com.godwarrior.paginationfx.connection;
+package com.godwarrior.paginationfx.database;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

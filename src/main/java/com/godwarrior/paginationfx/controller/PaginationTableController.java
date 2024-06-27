@@ -1,8 +1,6 @@
 package com.godwarrior.paginationfx.controller;
 
-import com.godwarrior.paginationfx.connection.mysql.ConnectionMSQL;
-import com.godwarrior.paginationfx.connection.mysql.MySQLSelect;
-import com.godwarrior.paginationfx.models.Usuario;
+import com.godwarrior.paginationfx.database.mysql.MySQLSelect;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -10,19 +8,25 @@ import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 
 import java.lang.reflect.Field;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class PaginationTableController<T> {
 
-    private T object;
-    private String dataBaseName;
-
+    private Class<T> objectType;
+    private String dataBaseTable;
+    private String queryBase;
     private String query;
+    private int currentPage = 1;
+    private final int itemsPerPage = 10;
+    private int totalItems = 0;
+    private int totalPages = 0;
 
     @FXML
-    private ImageView backPageImgView , nextPageImgView;
+    private ImageView backPageImgView, nextPageImgView;
 
     @FXML
-    private ImageView filterImgView , resetFilterImgView;
+    private ImageView filterImgView, resetFilterImgView;
 
     @FXML
     private TableView<T> filterTableView = new TableView<>();
@@ -36,28 +40,74 @@ public class PaginationTableController<T> {
     @FXML
     private ComboBox<Integer> pageSelectComboBox;
 
-    public void initialize(T object, String dataBaseName) {
-        this.object = object;
-        this.dataBaseName = dataBaseName;
+    public void initialize(Class<T> objectType, String dataBaseTable) {
+        this.objectType = objectType;
+        this.dataBaseTable = dataBaseTable;
 
-        ConnectionMSQL.getInstance("localhost", "paginationtest", "root", "");
+        queryBase = "SELECT * FROM " + this.dataBaseTable;
 
-        query = "SELECT * FROM usuario";
+        totalItems = MySQLSelect.countRows("SELECT COUNT(*) FROM " + this.dataBaseTable);
+        totalPages = (int) Math.ceil((double) totalItems / itemsPerPage);
 
-        this.addColumn("Identificador" , "id");
-        this.addColumn("Nombre", "name");
-        this.addColumn("Apellido" ,"telefono");
+        pageSelectComboBox.getItems().addAll(IntStream.rangeClosed(1, totalPages).boxed().toList());
+        pageSelectComboBox.setValue(currentPage);
 
-        // Set the items in the TableView
-        this.filterTableView.setItems((ObservableList<T>) MySQLSelect.executeQuery(query, Usuario.class));
+        pageSelectComboBox.setOnAction(event -> {
+            currentPage = pageSelectComboBox.getValue();
+            updateQuery();
+            loadPage();
+            updateButtonStates();
+        });
+
+
+        updateQuery();
+        loadPage();
+
+        updateButtonStates();
     }
 
-    public String getQuery() {
-        return query;
+    private void updateQuery() {
+        query = queryBase + " LIMIT " + itemsPerPage + " OFFSET " + (currentPage - 1) * itemsPerPage;
     }
 
-    public void setQuery(String query) {
-        this.query = query;
+    private void loadPage() {
+        ObservableList<T> result = MySQLSelect.executeQuery(query, objectType);
+        this.filterTableView.setItems(result);
+        numberPageTextField.setText(String.valueOf(currentPage));
+    }
+
+    @FXML
+    private void nextPage() {
+        if (currentPage < totalPages) {
+            currentPage++;
+            updateQuery();
+            loadPage();
+            pageSelectComboBox.setValue(currentPage);
+            updateButtonStates();
+        }
+    }
+    @FXML
+    private void previousPage() {
+        if (currentPage > 1) {
+            currentPage--;
+            updateQuery();
+            loadPage();
+            pageSelectComboBox.setValue(currentPage);
+            updateButtonStates();
+        }
+    }
+
+    private void updateButtonStates() {
+        goNextPageButton.setDisable(currentPage >= totalPages);
+        goBackPageButton.setDisable(currentPage <= 1);
+    }
+
+    public String getQueryBase() {
+        return queryBase;
+    }
+
+    public void setQueryBase(String query) {
+        this.queryBase = query;
     }
 
     public void addColumn(String columnName, String attributeName) {
@@ -65,7 +115,7 @@ public class PaginationTableController<T> {
         column.setCellValueFactory(cellData -> {
             try {
                 Field field = cellData.getValue().getClass().getDeclaredField(attributeName);
-                field.setAccessible(true);  // Make the field accessible
+                field.setAccessible(true);
                 return new SimpleStringProperty(String.valueOf(field.get(cellData.getValue())));
             } catch (IllegalAccessException | NoSuchFieldException e) {
                 e.printStackTrace();
@@ -75,5 +125,4 @@ public class PaginationTableController<T> {
 
         filterTableView.getColumns().add(column);
     }
-
 }

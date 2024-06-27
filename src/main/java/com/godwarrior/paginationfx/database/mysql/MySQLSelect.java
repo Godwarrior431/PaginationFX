@@ -1,4 +1,4 @@
-package com.godwarrior.paginationfx.connection.mysql;
+package com.godwarrior.paginationfx.database.mysql;
 
 import com.godwarrior.paginationfx.annotation.ColumnName;
 import javafx.collections.FXCollections;
@@ -12,12 +12,32 @@ import java.lang.reflect.Field;
 
 public class  MySQLSelect {
 
+    public static int countRows(String query) {
+        int rowCount = 0;
+
+        try {
+            Connection connection = ConnectionMSQL.getConnect();
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                rowCount = resultSet.getInt(1);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return rowCount;
+    }
+
     public static <T> ObservableList<T> executeQuery(String query, Class<T> clazz) {
         ObservableList<T> resultList = FXCollections.observableArrayList();
 
-        try (Connection connection = ConnectionMSQL.getConnect();
-             PreparedStatement preparedStatement = connection.prepareStatement(query);
-             ResultSet resultSet = preparedStatement.executeQuery()) {
+        try {
+            Connection connection = ConnectionMSQL.getConnect();
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            ResultSet resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()) {
                 T obj = clazz.getDeclaredConstructor().newInstance();

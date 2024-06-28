@@ -1,14 +1,24 @@
 package com.godwarrior.paginationfx.controller;
 
 import com.godwarrior.paginationfx.database.mysql.MySQLSelect;
+import com.godwarrior.paginationfx.models.Filter;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.Region;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 import java.util.stream.IntStream;
 
 public class PaginationTableController<T> {
@@ -21,6 +31,10 @@ public class PaginationTableController<T> {
     private final int itemsPerPage = 10;
     private int totalItems = 0;
     private int totalPages = 0;
+
+    private List<Filter> listFilters;
+
+    private Stage stageAux;
 
     @FXML
     private ImageView backPageImgView, nextPageImgView;
@@ -40,9 +54,15 @@ public class PaginationTableController<T> {
     @FXML
     private ComboBox<Integer> pageSelectComboBox;
 
+
     public void initialize(Class<T> objectType, String dataBaseTable) {
         this.objectType = objectType;
         this.dataBaseTable = dataBaseTable;
+
+        filterImgView.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/com/godwarrior/paginationfx/resources/icons/filterIcon.png"))));
+        resetFilterImgView.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/com/godwarrior/paginationfx/resources/icons/resetForms.png"))));
+        backPageImgView.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/com/godwarrior/paginationfx/resources/icons/backIcon.png"))));
+        nextPageImgView.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/com/godwarrior/paginationfx/resources/icons/nextIcon.png"))));
 
         queryBase = "SELECT * FROM " + this.dataBaseTable;
 
@@ -59,11 +79,14 @@ public class PaginationTableController<T> {
             updateButtonStates();
         });
 
-
         updateQuery();
         loadPage();
 
         updateButtonStates();
+    }
+
+    public void addFilters(ArrayList<Filter> listFilters) {
+        this.listFilters = listFilters;
     }
 
     private void updateQuery() {
@@ -97,6 +120,16 @@ public class PaginationTableController<T> {
         }
     }
 
+    @FXML
+    private void resetFilter() {
+        queryBase = "SELECT * FROM " + this.dataBaseTable;
+        currentPage = 1;
+        updateQuery();
+        loadPage();
+        pageSelectComboBox.setValue(currentPage);
+        updateButtonStates();
+    }
+
     private void updateButtonStates() {
         goNextPageButton.setDisable(currentPage >= totalPages);
         goBackPageButton.setDisable(currentPage <= 1);
@@ -125,4 +158,30 @@ public class PaginationTableController<T> {
 
         filterTableView.getColumns().add(column);
     }
+
+    @FXML
+    public void showFilters() throws IOException {
+        if (stageAux != null && stageAux.isShowing())
+            stageAux.toFront();
+        else {
+            stageAux = new Stage();
+            stageAux.resizableProperty().setValue(Boolean.FALSE);
+
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/godwarrior/paginationfx/resources/view/FilterPaneView.fxml"));
+            Region root = (Region) loader.load();
+            Scene scene = new Scene(root);
+
+            stageAux.setTitle("Filters");
+            stageAux.setScene(scene);
+            stageAux.resizableProperty().setValue(Boolean.FALSE);
+
+            stageAux.initModality(Modality.APPLICATION_MODAL);
+
+            FilterPaneController FilterPane = loader.<FilterPaneController>getController();
+            FilterPane.initialize(this.listFilters);
+            stageAux.showAndWait();
+
+        }
+    }
 }
+

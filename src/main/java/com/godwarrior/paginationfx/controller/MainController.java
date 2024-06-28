@@ -1,11 +1,18 @@
 package com.godwarrior.paginationfx.controller;
 
 import com.godwarrior.paginationfx.database.mysql.ConnectionMSQL;
+import com.godwarrior.paginationfx.models.Filter;
 import com.godwarrior.paginationfx.models.Usuario;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 
 public class MainController {
     @FXML
@@ -14,9 +21,9 @@ public class MainController {
     @FXML
     public void initialize() {
         try {
-            // Cargar el archivo FXML de PaginationTable
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/godwarrior/paginationfx/view/PaginationTableView.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/godwarrior/paginationfx/resources/view/PaginationTableView.fxml"));
             Node paginationTable = loader.load();
+
 
             ConnectionMSQL.getInstance("localhost", "paginationtest", "root", "");
 
@@ -27,8 +34,17 @@ public class MainController {
             newTable.addColumn("Nombre", "name");
             newTable.addColumn("Apellido", "telefono");
 
-            // Añadir el nodo cargado al VBox
+            newTable.addFilters(new ArrayList<>(Arrays.asList(
+                    new Filter("id", "text"),
+                    new Filter("name", "number"),
+                    new Filter("test", "date"),
+                    new Filter("qwe", "time"),
+                    new Filter("zxc", "bool")
+            )));
+
+            VBox.setVgrow(paginationTable, Priority.ALWAYS);
             vboxConteiner.getChildren().add(paginationTable);
+
         } catch (Exception e) {
             e.printStackTrace();
         }

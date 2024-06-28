@@ -7,24 +7,23 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.text.Font?>
 
-
-<HBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="85.0" prefWidth="401.0" style="-fx-background-color: #687CBC; -fx-border-color: #bdbdbd; -fx-border-width: 4px; -fx-border-radius: 10; -fx-background-radius: 10;" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.godwarrior.paginationfx.controller.FilterPaneComponentController">
+<HBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="85.0" prefWidth="401.0" style="-fx-background-color: #687CBC; -fx-border-color: #000000; -fx-border-width: 4px; -fx-border-radius: 10; -fx-background-radius: 10;" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.godwarrior.paginationfx.controller.FilterPaneComponentController">
    <children>
       <HBox alignment="CENTER" spacing="25.0" HBox.hgrow="ALWAYS">
          <children>
             <Label fx:id="attributeLabel" text="Atributo">
                <font>
-                  <Font size="15.0" />
+                  <Font size="16.0" />
                </font>
             </Label>
             <Label fx:id="operatorLabel" text="Operator">
                <font>
-                  <Font size="15.0" />
+                  <Font name="System Italic" size="16.0" />
                </font>
             </Label>
-            <Label fx:id="textLabel" text="StringBusqueda">
+            <Label fx:id="valueTextLabel" text="StringBusqueda">
                <font>
-                  <Font size="15.0" />
+                  <Font size="16.0" />
                </font>
             </Label>
          </children>

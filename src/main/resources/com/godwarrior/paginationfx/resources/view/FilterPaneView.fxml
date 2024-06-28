@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<SplitPane dividerPositions="0.5, 0.5" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" orientation="VERTICAL" prefHeight="534.0" prefWidth="518.0" style="-fx-border-color: #677bbc; -fx-border-width: 6; -fx-background-color: #a8a8a8;" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.godwarrior.paginationfx.controller.FilterPaneController">
+<SplitPane dividerPositions="0.5, 0.5" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" orientation="VERTICAL" prefHeight="576.0" prefWidth="550.0" style="-fx-border-color: #677bbc; -fx-border-width: 6; -fx-background-color: #a8a8a8;" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.godwarrior.paginationfx.controller.FilterPaneController">
   <items>
       <VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="168.0" prefWidth="540.0" spacing="2.0" style="-fx-background-color: #687CBC; -fx-border-color: #ffffff;">
          <children>
@@ -26,7 +26,7 @@
                   <Insets left="10.0" right="10.0" />
                </VBox.margin>
             </HBox>
-            <Button fx:id="addFilter" contentDisplay="RIGHT" graphicTextGap="8.0" prefHeight="28.0" prefWidth="149.0" text="Add Filter">
+            <Button contentDisplay="RIGHT" graphicTextGap="8.0" onAction="#addFilter" prefHeight="28.0" prefWidth="149.0" text="Add Filter">
                <graphic>
                   <ImageView fx:id="addFilterImgView" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" />
                </graphic>
@@ -50,7 +50,7 @@
                </VBox.margin></Label>
             <ScrollPane fitToHeight="true" fitToWidth="true" pannable="true" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
                <content>
-                  <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" style="-fx-background-color: #687CBC;" />
+                  <VBox fx:id="appliedFilterContainer" alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" spacing="20.0" style="-fx-background-color: #687CBC;" />
                </content>
             </ScrollPane>
          </children>

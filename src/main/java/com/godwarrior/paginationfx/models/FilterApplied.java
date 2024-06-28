@@ -1,15 +1,15 @@
 package com.godwarrior.paginationfx.models;
 
-import java.util.List;
-
 public class FilterApplied {
 
     private String attributeName;
-    private String operatorSelected;
+    private String operatorName;
+    private String queryOperatorQuery;
     private String valueQuery;
 
-    public FilterApplied(String operatorSelected, String attributeName, String valueQuery) {
-        this.operatorSelected = operatorSelected;
+    public FilterApplied(String attributeName, String operatorName, String queryOperatorQuery, String valueQuery) {
+        this.queryOperatorQuery = queryOperatorQuery;
+        this.operatorName = operatorName;
         this.attributeName = attributeName;
         this.valueQuery = valueQuery;
     }
@@ -22,12 +22,12 @@ public class FilterApplied {
         this.attributeName = attributeName;
     }
 
-    public String getOperatorSelected() {
-        return operatorSelected;
+    public String getOperatorName() {
+        return operatorName;
     }
 
-    public void setOperatorSelected(String operatorSelected) {
-        this.operatorSelected = operatorSelected;
+    public void setOperatorName(String operatorName) {
+        this.operatorName = operatorName;
     }
 
     public String getValueQuery() {
@@ -36,5 +36,23 @@ public class FilterApplied {
 
     public void setValueQuery(String valueQuery) {
         this.valueQuery = valueQuery;
+    }
+
+    @Override
+    public String toString() {
+        return "FilterApplied{" +
+                "attributeName='" + attributeName + '\'' +
+                ", operatorName='" + operatorName + '\'' +
+                ", queryOperatorQuery='" + queryOperatorQuery + '\'' +
+                ", valueQuery='" + valueQuery + '\'' +
+                '}';
+    }
+
+    public String getQueryOperatorQuery() {
+        return queryOperatorQuery;
+    }
+
+    public void setQueryOperatorQuery(String queryOperatorQuery) {
+        this.queryOperatorQuery = queryOperatorQuery;
     }
 }

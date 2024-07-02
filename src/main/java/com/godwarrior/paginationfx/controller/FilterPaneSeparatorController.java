@@ -33,7 +33,7 @@ public class FilterPaneSeparatorController {
             }
         });
     }
-
+ 
     public CheckBox getAndCheckBox() {
         return andCheckBox;
     }

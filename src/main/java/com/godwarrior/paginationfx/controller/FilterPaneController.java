@@ -16,6 +16,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -25,7 +26,7 @@ import java.util.regex.Pattern;
 
 public class FilterPaneController {
 
-    private  List<FilterApplied> filtersApplied = FXCollections.observableArrayList();
+    private List<FilterApplied> currentFiltersApplied = new ArrayList<>();
 
     @FXML
     private ImageView addFilterImgView;
@@ -49,8 +50,8 @@ public class FilterPaneController {
     private ImageView resetFilterImgView;
 
     @FXML
-    public void initialize(List<Filter> filterList , List<FilterApplied> filterAppliedList) {
-        this.filtersApplied = filterAppliedList;
+    public void initialize(List<Filter> filterList, List<FilterApplied> filterAppliedList) {
+        this.currentFiltersApplied = filterAppliedList;
         addFilterImgView.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/com/godwarrior/paginationfx/resources/icons/addIcon.png"))));
         filterImgView.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/com/godwarrior/paginationfx/resources/icons/addFilterIcon.png"))));
         resetFilterImgView.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/com/godwarrior/paginationfx/resources/icons/resetForms.png"))));
@@ -66,6 +67,9 @@ public class FilterPaneController {
         });
 
         attributeComboBox.getSelectionModel().selectFirst();
+
+        // Fill the appliedFilterContainer with existing filters
+        fillAppliedFilters();
     }
 
     private void updatePredicatesComboBox(Filter filter) {
@@ -162,7 +166,6 @@ public class FilterPaneController {
         appliedFilterContainer.getChildren().remove(filterComponent);
     }
 
-
     @FXML
     void addFilter() {
         Filter selectedFilter = attributeComboBox.getSelectionModel().getSelectedItem();
@@ -170,31 +173,33 @@ public class FilterPaneController {
         String value = getFieldValue();
 
         if (selectedFilter != null && selectedOperator != null && value != null && !value.isEmpty()) {
-            try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/godwarrior/paginationfx/resources/view/FilterPaneComponentView.fxml"));
-                Pane filterComponent = loader.load();
-
-                FilterPaneComponentController componentController = loader.getController();
-                componentController.setParentController(this);
-
-                FilterApplied filterApplied = new FilterApplied(selectedFilter.getAttributeName(), selectedOperator.getText(), selectedOperator.getSql(), value);
-                componentController.initialize(filterApplied);
-
-                // Set the controller as a property of the filter component
-                filterComponent.getProperties().put("controller", componentController);
-
-                if (!appliedFilterContainer.getChildren().isEmpty()) {
-                    addSeparator();
-                }
-
-                appliedFilterContainer.getChildren().add(filterComponent);
-            } catch (IOException e) {
-                e.printStackTrace();
+            // Si ya hay filtros aplicados, añadir un separador
+            if (!appliedFilterContainer.getChildren().isEmpty()) {
+                addSeparator(null);
             }
+            addFilterComponent(new FilterApplied(selectedFilter.getAttributeName(), selectedOperator.getText(), selectedOperator.getSql(), value));
         }
     }
 
-    private void addSeparator() {
+
+    private void addFilterComponent(FilterApplied filterApplied) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/godwarrior/paginationfx/resources/view/FilterPaneComponentView.fxml"));
+            Pane filterComponent = loader.load();
+
+            FilterPaneComponentController componentController = loader.getController();
+            componentController.setParentController(this);
+            componentController.initialize(filterApplied);
+
+            filterComponent.getProperties().put("controller", componentController);
+
+            appliedFilterContainer.getChildren().add(filterComponent);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void addSeparator(String operator) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/godwarrior/paginationfx/resources/view/FilterPaneSeparatorView.fxml"));
             HBox separator = loader.load();
@@ -202,13 +207,19 @@ public class FilterPaneController {
 
             separator.getProperties().put("controller", separatorController);
 
+            if ("AND".equals(operator)) {
+                separatorController.getAndCheckBox().setSelected(true);
+            } else {
+                // Default to OR if no operator is provided
+                separatorController.getOrCheckBox().setSelected(true);
+            }
+
             appliedFilterContainer.getChildren().add(separator);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-
-
+ 
     private String getFieldValue() {
         switch (attributeComboBox.getSelectionModel().getSelectedItem().getAttributeType().toLowerCase()) {
             case "text":
@@ -231,38 +242,53 @@ public class FilterPaneController {
         }
     }
 
+    private void fillAppliedFilters() {
+        if (currentFiltersApplied != null && !currentFiltersApplied.isEmpty()) {
+            for (FilterApplied filterApplied : currentFiltersApplied) {
+                if ("AND".equals(filterApplied.getQueryOperatorQuery()) || "OR".equals(filterApplied.getQueryOperatorQuery())) {
+                    addSeparator(filterApplied.getQueryOperatorQuery());
+                } else {
+                    addFilterComponent(filterApplied);
+                }
+            }
+        }
+    }
+
     @FXML
     void applyFilters(ActionEvent event) {
-        List<FilterApplied> filtersApplied = new ArrayList<>();
+        currentFiltersApplied.clear();
 
         for (Node node : appliedFilterContainer.getChildren()) {
             if (node instanceof Pane && node.getProperties().get("controller") instanceof FilterPaneComponentController) {
-                // Recuperar el controlador del componente de filtro
                 FilterPaneComponentController componentController = (FilterPaneComponentController) node.getProperties().get("controller");
                 if (componentController != null) {
                     FilterApplied filterApplied = componentController.getFilterApplied();
                     if (filterApplied != null) {
-                        filtersApplied.add(filterApplied);
+                        currentFiltersApplied.add(filterApplied);
                     }
                 }
             } else if (node instanceof HBox && node.getProperties().get("controller") instanceof FilterPaneSeparatorController) {
-                // Recuperar el controlador del separador
                 FilterPaneSeparatorController separatorController = (FilterPaneSeparatorController) node.getProperties().get("controller");
                 if (separatorController != null) {
-                    // Verificar el estado de los checkboxes y crear un FilterApplied para el operador lógico
                     if (separatorController.getAndCheckBox().isSelected()) {
-                        filtersApplied.add(new FilterApplied("AND"));
+                        currentFiltersApplied.add(new FilterApplied("AND"));
                     } else if (separatorController.getOrCheckBox().isSelected()) {
-                        filtersApplied.add(new FilterApplied("OR"));
+                        currentFiltersApplied.add(new FilterApplied("OR"));
                     }
                 }
             }
         }
 
-        // Implementar lógica para aplicar los filtros
-        for (FilterApplied filter : filtersApplied) {
+        for (FilterApplied filter : currentFiltersApplied) {
             System.out.println("Filter Applied: " + filter.getAttributeName() + " " + filter.getOperatorName() + " " + filter.getQueryOperatorQuery() + " " + filter.getValueQuery());
         }
+
+        Stage stage = (Stage) attributeComboBox.getScene().getWindow();
+        stage.close();
+    }
+
+    public List<FilterApplied> getCurrentFiltersApplied() {
+        return currentFiltersApplied;
     }
 
     @FXML
@@ -271,10 +297,5 @@ public class FilterPaneController {
         predicatesComboBox.getItems().clear();
         fieldContainer.getChildren().clear();
         appliedFilterContainer.getChildren().clear();  // Clear applied filters as well
-    }
-
-
-    public List<FilterApplied> getFiltersApplied() {
-        return filtersApplied;
     }
 }

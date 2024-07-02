@@ -2,6 +2,7 @@ package com.godwarrior.paginationfx.controller;
 
 import com.godwarrior.paginationfx.database.mysql.MySQLSelect;
 import com.godwarrior.paginationfx.models.Filter;
+import com.godwarrior.paginationfx.models.FilterApplied;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -33,6 +34,7 @@ public class PaginationTableController<T> {
     private int totalPages = 0;
 
     private List<Filter> listFilters;
+    private List<FilterApplied> appliedFilters =  new ArrayList<>();
 
     private Stage stageAux;
 
@@ -178,9 +180,10 @@ public class PaginationTableController<T> {
             stageAux.initModality(Modality.APPLICATION_MODAL);
 
             FilterPaneController FilterPane = loader.<FilterPaneController>getController();
-            FilterPane.initialize(this.listFilters , null );
+            FilterPane.initialize(this.listFilters , appliedFilters);
             stageAux.showAndWait();
-            System.out.println(FilterPane.getFiltersApplied());
+            appliedFilters = FilterPane.getCurrentFiltersApplied();
+
 
         }
     }

@@ -14,6 +14,10 @@ public class FilterApplied {
         this.valueQuery = valueQuery;
     }
 
+    public FilterApplied(String queryOperatorQuery) {
+        this.queryOperatorQuery = queryOperatorQuery;
+    }
+
     public String getAttributeName() {
         return attributeName;
     }

@@ -178,8 +178,9 @@ public class PaginationTableController<T> {
             stageAux.initModality(Modality.APPLICATION_MODAL);
 
             FilterPaneController FilterPane = loader.<FilterPaneController>getController();
-            FilterPane.initialize(this.listFilters);
+            FilterPane.initialize(this.listFilters , null );
             stageAux.showAndWait();
+            System.out.println(FilterPane.getFiltersApplied());
 
         }
     }

@@ -19,12 +19,13 @@ import javafx.scene.layout.VBox;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
 public class FilterPaneController {
+
+    private  List<FilterApplied> filtersApplied = FXCollections.observableArrayList();
 
     @FXML
     private ImageView addFilterImgView;
@@ -48,7 +49,8 @@ public class FilterPaneController {
     private ImageView resetFilterImgView;
 
     @FXML
-    public void initialize(List<Filter> filterList) {
+    public void initialize(List<Filter> filterList , List<FilterApplied> filterAppliedList) {
+        this.filtersApplied = filterAppliedList;
         addFilterImgView.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/com/godwarrior/paginationfx/resources/icons/addIcon.png"))));
         filterImgView.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/com/godwarrior/paginationfx/resources/icons/addFilterIcon.png"))));
         resetFilterImgView.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/com/godwarrior/paginationfx/resources/icons/resetForms.png"))));
@@ -147,8 +149,19 @@ public class FilterPaneController {
     }
 
     public void removeFilterComponent(Pane filterComponent) {
+        int index = appliedFilterContainer.getChildren().indexOf(filterComponent);
+
+        if (index > 0 && appliedFilterContainer.getChildren().get(index - 1) instanceof HBox) {
+            // Remove the separator before the filter component
+            appliedFilterContainer.getChildren().remove(index - 1);
+        } else if (index < appliedFilterContainer.getChildren().size() - 1 && appliedFilterContainer.getChildren().get(index + 1) instanceof HBox) {
+            // Remove the separator after the filter component if there is no component before it
+            appliedFilterContainer.getChildren().remove(index + 1);
+        }
+
         appliedFilterContainer.getChildren().remove(filterComponent);
     }
+
 
     @FXML
     void addFilter() {
@@ -164,16 +177,34 @@ public class FilterPaneController {
                 FilterPaneComponentController componentController = loader.getController();
                 componentController.setParentController(this);
 
-                FilterApplied filterApplied = new FilterApplied( selectedFilter.getAttributeName(),selectedOperator.getText(),selectedOperator.getSql(), value);
+                FilterApplied filterApplied = new FilterApplied(selectedFilter.getAttributeName(), selectedOperator.getText(), selectedOperator.getSql(), value);
                 componentController.initialize(filterApplied);
 
                 // Set the controller as a property of the filter component
                 filterComponent.getProperties().put("controller", componentController);
 
+                if (!appliedFilterContainer.getChildren().isEmpty()) {
+                    addSeparator();
+                }
+
                 appliedFilterContainer.getChildren().add(filterComponent);
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+    private void addSeparator() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/godwarrior/paginationfx/resources/view/FilterPaneSeparatorView.fxml"));
+            HBox separator = loader.load();
+            FilterPaneSeparatorController separatorController = loader.getController();
+
+            separator.getProperties().put("controller", separatorController);
+
+            appliedFilterContainer.getChildren().add(separator);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -203,9 +234,10 @@ public class FilterPaneController {
     @FXML
     void applyFilters(ActionEvent event) {
         List<FilterApplied> filtersApplied = new ArrayList<>();
+
         for (Node node : appliedFilterContainer.getChildren()) {
-            if (node instanceof Pane) {
-                // Retrieve the controller from the properties of the node
+            if (node instanceof Pane && node.getProperties().get("controller") instanceof FilterPaneComponentController) {
+                // Recuperar el controlador del componente de filtro
                 FilterPaneComponentController componentController = (FilterPaneComponentController) node.getProperties().get("controller");
                 if (componentController != null) {
                     FilterApplied filterApplied = componentController.getFilterApplied();
@@ -213,9 +245,24 @@ public class FilterPaneController {
                         filtersApplied.add(filterApplied);
                     }
                 }
+            } else if (node instanceof HBox && node.getProperties().get("controller") instanceof FilterPaneSeparatorController) {
+                // Recuperar el controlador del separador
+                FilterPaneSeparatorController separatorController = (FilterPaneSeparatorController) node.getProperties().get("controller");
+                if (separatorController != null) {
+                    // Verificar el estado de los checkboxes y crear un FilterApplied para el operador lógico
+                    if (separatorController.getAndCheckBox().isSelected()) {
+                        filtersApplied.add(new FilterApplied("AND"));
+                    } else if (separatorController.getOrCheckBox().isSelected()) {
+                        filtersApplied.add(new FilterApplied("OR"));
+                    }
+                }
             }
         }
 
+        // Implementar lógica para aplicar los filtros
+        for (FilterApplied filter : filtersApplied) {
+            System.out.println("Filter Applied: " + filter.getAttributeName() + " " + filter.getOperatorName() + " " + filter.getQueryOperatorQuery() + " " + filter.getValueQuery());
+        }
     }
 
     @FXML
@@ -224,5 +271,10 @@ public class FilterPaneController {
         predicatesComboBox.getItems().clear();
         fieldContainer.getChildren().clear();
         appliedFilterContainer.getChildren().clear();  // Clear applied filters as well
+    }
+
+
+    public List<FilterApplied> getFiltersApplied() {
+        return filtersApplied;
     }
 }

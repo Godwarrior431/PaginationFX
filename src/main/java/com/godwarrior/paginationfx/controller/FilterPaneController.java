@@ -64,23 +64,18 @@ public class FilterPaneController {
         attributeComboBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
                 updatePredicatesComboBox(newValue);
-                updateFieldContainer(newValue.getAttributeType());
+                createFieldForType(newValue.getAttributeType());
             }
         });
 
         attributeComboBox.getSelectionModel().selectFirst();
 
-        // Fill the appliedFilterContainer with existing filters
         fillAppliedFilters();
     }
 
     private void updatePredicatesComboBox(Filter filter) {
         ObservableList<Operator> operatorTexts = FXCollections.observableArrayList(filter.getOperators());
         predicatesComboBox.setItems(operatorTexts);
-    }
-
-    private void updateFieldContainer(String attributeType) {
-        createFieldForType(attributeType);
     }
 
     private void createFieldForType(String type) {
@@ -175,11 +170,10 @@ public class FilterPaneController {
         String value = getFieldValue();
 
         if (selectedFilter != null && selectedOperator != null && value != null && !value.isEmpty()) {
-            // Si ya hay filtros aplicados, añadir un separador
             if (!appliedFilterContainer.getChildren().isEmpty()) {
                 addSeparator(null);
             }
-            addFilterComponent(new FilterApplied(selectedFilter.getAttributeName(), selectedOperator.getText(), selectedOperator.getSql(), value));
+            addFilterComponent(new FilterApplied(selectedFilter.getAttributeName(), selectedOperator.getText(), selectedOperator.getSql(), value, this.attributeComboBox.getSelectionModel().getSelectedItem().getAttributeType()));
         }
     }
 
@@ -221,7 +215,7 @@ public class FilterPaneController {
             e.printStackTrace();
         }
     }
- 
+
     private String getFieldValue() {
         switch (attributeComboBox.getSelectionModel().getSelectedItem().getAttributeType().toLowerCase()) {
             case "text":
@@ -299,5 +293,6 @@ public class FilterPaneController {
         fieldContainer.getChildren().clear();
         appliedFilterContainer.getChildren().clear();
         attributeComboBox.getSelectionModel().selectFirst();
+        this.createFieldForType(attributeComboBox.getSelectionModel().getSelectedItem().getAttributeType());
     }
 }

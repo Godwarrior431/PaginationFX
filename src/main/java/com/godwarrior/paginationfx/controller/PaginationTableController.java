@@ -34,7 +34,7 @@ public class PaginationTableController<T> {
     private int totalPages = 0;
 
     private List<Filter> listFilters;
-    private List<FilterApplied> appliedFilters =  new ArrayList<>();
+    private List<FilterApplied> appliedFilters = new ArrayList<>();
 
     private Stage stageAux;
 
@@ -110,6 +110,7 @@ public class PaginationTableController<T> {
             updateButtonStates();
         }
     }
+
     @FXML
     private void previousPage() {
         if (currentPage > 1) {
@@ -129,19 +130,12 @@ public class PaginationTableController<T> {
         loadPage();
         pageSelectComboBox.setValue(currentPage);
         updateButtonStates();
+        appliedFilters.clear();
     }
 
     private void updateButtonStates() {
         goNextPageButton.setDisable(currentPage >= totalPages);
         goBackPageButton.setDisable(currentPage <= 1);
-    }
-
-    public String getQueryBase() {
-        return queryBase;
-    }
-
-    public void setQueryBase(String query) {
-        this.queryBase = query;
     }
 
     public void addColumn(String columnName, String attributeName) {
@@ -179,12 +173,46 @@ public class PaginationTableController<T> {
             stageAux.initModality(Modality.APPLICATION_MODAL);
 
             FilterPaneController FilterPane = loader.<FilterPaneController>getController();
-            FilterPane.initialize(this.listFilters , appliedFilters);
+            FilterPane.initialize(this.listFilters, appliedFilters);
             stageAux.showAndWait();
             appliedFilters = FilterPane.getCurrentFiltersApplied();
 
+            // Reconstruir la consulta con los filtros y paginación
+            query = buildQueryWithFilters();
 
+            // Actualizar la página con la nueva consulta
+            loadPage();
         }
     }
+
+
+    private String buildQueryWithFilters() {
+        StringBuilder queryBuilder = new StringBuilder(queryBase);
+        boolean firstCondition = true;
+
+        for (FilterApplied filter : appliedFilters) {
+            if (filter.getAttributeName() != null && !filter.getAttributeName().isEmpty()) {
+                if (firstCondition) {
+                    queryBuilder.append(" WHERE ");
+                    firstCondition = false;
+                } else {
+                    queryBuilder.append(" AND ");
+                }
+                queryBuilder.append(filter.getAttributeName()).append(" ")
+                        .append(filter.getQueryOperatorQuery()).append(" ")
+                        .append(filter.getFormattedValue());
+            } else if (filter.getQueryOperatorQuery() != null && !filter.getQueryOperatorQuery().isEmpty()) {
+                queryBuilder.append(" ").append(filter.getQueryOperatorQuery()).append(" ");
+            }
+        }
+
+        // Añadir la paginación al final
+        queryBuilder.append(" LIMIT ").append(itemsPerPage)
+                .append(" OFFSET ").append((currentPage - 1) * itemsPerPage);
+
+        return queryBuilder.toString();
+    }
+
+
 }
 

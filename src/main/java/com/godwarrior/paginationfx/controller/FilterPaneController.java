@@ -1,5 +1,7 @@
 package com.godwarrior.paginationfx.controller;
 
+import com.godwarrior.paginationfx.controller.component.FilterPaneComponentController;
+import com.godwarrior.paginationfx.controller.component.FilterPaneSeparatorController;
 import com.godwarrior.paginationfx.models.Filter;
 import com.godwarrior.paginationfx.models.FilterApplied;
 import com.godwarrior.paginationfx.models.Operator;
@@ -184,7 +186,7 @@ public class FilterPaneController {
 
     private void addFilterComponent(FilterApplied filterApplied) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/godwarrior/paginationfx/resources/view/FilterPaneComponentView.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/godwarrior/paginationfx/resources/view/component/FilterPaneComponentView.fxml"));
             Pane filterComponent = loader.load();
 
             FilterPaneComponentController componentController = loader.getController();
@@ -201,7 +203,7 @@ public class FilterPaneController {
 
     private void addSeparator(String operator) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/godwarrior/paginationfx/resources/view/FilterPaneSeparatorView.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/godwarrior/paginationfx/resources/view/component/FilterPaneSeparatorView.fxml"));
             HBox separator = loader.load();
             FilterPaneSeparatorController separatorController = loader.getController();
 
@@ -293,9 +295,9 @@ public class FilterPaneController {
 
     @FXML
     void resetFilters(ActionEvent event) {
-        attributeComboBox.getSelectionModel().selectFirst();
         predicatesComboBox.getItems().clear();
         fieldContainer.getChildren().clear();
-        appliedFilterContainer.getChildren().clear();  // Clear applied filters as well
+        appliedFilterContainer.getChildren().clear();
+        attributeComboBox.getSelectionModel().selectFirst();
     }
 }

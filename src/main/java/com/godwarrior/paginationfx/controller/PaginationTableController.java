@@ -56,7 +56,6 @@ public class PaginationTableController<T> {
     @FXML
     private ComboBox<Integer> pageSelectComboBox;
 
-
     public void initialize(Class<T> objectType, String dataBaseTable) {
         this.objectType = objectType;
         this.dataBaseTable = dataBaseTable;

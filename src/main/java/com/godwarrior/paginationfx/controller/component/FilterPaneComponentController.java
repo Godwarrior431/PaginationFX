@@ -1,5 +1,6 @@
-package com.godwarrior.paginationfx.controller;
+package com.godwarrior.paginationfx.controller.component;
 
+import com.godwarrior.paginationfx.controller.FilterPaneController;
 import com.godwarrior.paginationfx.models.FilterApplied;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;

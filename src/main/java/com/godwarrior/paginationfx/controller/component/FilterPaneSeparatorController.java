@@ -1,4 +1,4 @@
-package com.godwarrior.paginationfx.controller;
+package com.godwarrior.paginationfx.controller.component;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;

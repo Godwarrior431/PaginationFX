@@ -17,7 +17,7 @@ public class Usuario {
   @ColumnName(name = "email")
   private String email;
 
-  @ColumnName(name = "fechaNacimiento")
+  @ColumnName(name = "fecha_nacimiento")
   private java.sql.Date fechaNacimiento;
 
   @ColumnName(name = "telefono")

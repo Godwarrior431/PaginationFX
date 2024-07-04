@@ -2,13 +2,15 @@ package com.godwarrior.paginationfx.models;
 
 public class FilterApplied {
 
+    private String filterNameSelect;
     private String attributeName;
     private String operatorName;
     private String queryOperatorQuery;
     private String valueQuery;
     private String typeFilter;
 
-    public FilterApplied(String attributeName, String operatorName, String queryOperatorQuery, String valueQuery, String typeFilter) {
+    public FilterApplied(String filterNameSelect, String attributeName, String operatorName, String queryOperatorQuery, String valueQuery, String typeFilter) {
+        this.filterNameSelect = filterNameSelect;
         this.queryOperatorQuery = queryOperatorQuery;
         this.operatorName = operatorName;
         this.attributeName = attributeName;
@@ -88,5 +90,13 @@ public class FilterApplied {
             default:
                 throw new IllegalArgumentException("Tipo de filtro desconocido: " + typeFilter);
         }
+    }
+
+    public String getFilterNameSelect() {
+        return filterNameSelect;
+    }
+
+    public void setFilterNameSelect(String filterNameSelect) {
+        this.filterNameSelect = filterNameSelect;
     }
 }

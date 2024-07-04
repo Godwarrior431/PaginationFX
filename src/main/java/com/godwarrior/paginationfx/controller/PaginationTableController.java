@@ -180,6 +180,8 @@ public class PaginationTableController<T> {
             // Reconstruir la consulta con los filtros y paginación
             query = buildQueryWithFilters();
 
+            System.out.println(query);
+
             // Actualizar la página con la nueva consulta
             loadPage();
         }
@@ -189,26 +191,24 @@ public class PaginationTableController<T> {
     private String buildQueryWithFilters() {
         StringBuilder queryBuilder = new StringBuilder(queryBase);
         boolean firstCondition = true;
+        boolean whereAdded = false;
 
         for (FilterApplied filter : appliedFilters) {
             if (filter.getAttributeName() != null && !filter.getAttributeName().isEmpty()) {
-                if (firstCondition) {
+                if (firstCondition && !whereAdded) {
                     queryBuilder.append(" WHERE ");
-                    firstCondition = false;
+                    whereAdded = true;
                 } else {
                     queryBuilder.append(" AND ");
                 }
-                queryBuilder.append(filter.getAttributeName()).append(" ")
-                        .append(filter.getQueryOperatorQuery()).append(" ")
-                        .append(filter.getFormattedValue());
+                queryBuilder.append(filter.getAttributeName())
+                        .append(" ").append(filter.getQueryOperatorQuery())
+                        .append(" ").append(filter.getFormattedValue());
+                firstCondition = false;
             } else if (filter.getQueryOperatorQuery() != null && !filter.getQueryOperatorQuery().isEmpty()) {
                 queryBuilder.append(" ").append(filter.getQueryOperatorQuery()).append(" ");
             }
         }
-
-        // Añadir la paginación al final
-        queryBuilder.append(" LIMIT ").append(itemsPerPage)
-                .append(" OFFSET ").append((currentPage - 1) * itemsPerPage);
 
         return queryBuilder.toString();
     }

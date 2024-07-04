@@ -1,16 +1,15 @@
 package com.godwarrior.paginationfx.database.mysql;
 
-import com.godwarrior.paginationfx.annotation.ColumnName;
+import com.godwarrior.paginationfx.utils.ReflectionUtils;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
+import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.lang.reflect.Field;
 
-
-public class  MySQLSelect {
+public class MySQLSelect {
 
     public static int countRows(String query) {
         int rowCount = 0;
@@ -31,6 +30,7 @@ public class  MySQLSelect {
         return rowCount;
     }
 
+
     public static <T> ObservableList<T> executeQuery(String query, Class<T> clazz) {
         ObservableList<T> resultList = FXCollections.observableArrayList();
 
@@ -45,18 +45,14 @@ public class  MySQLSelect {
                 for (Field field : clazz.getDeclaredFields()) {
                     field.setAccessible(true);
 
-                    // Check for Column annotation
-                    ColumnName columnAnnotation = field.getAnnotation(ColumnName.class);
-                    if (columnAnnotation != null) {
-                        String columnName = columnAnnotation.name();
-                        Object value = resultSet.getObject(columnName);
-                        field.set(obj, value);
-                    } else {
-                        // Fallback to field name if no annotation is present
-                        String fieldName = field.getName();
-                        Object value = resultSet.getObject(fieldName);
-                        field.set(obj, value);
+                    // Use ReflectionUtils to get the column name
+                    String columnName = ReflectionUtils.getColumnLabel(clazz, field.getName());
+                    if (columnName == null) {
+                        columnName = field.getName(); // Fallback to field name if no annotation is present
                     }
+
+                    Object value = resultSet.getObject(columnName);
+                    field.set(obj, value);
                 }
 
                 resultList.add(obj);

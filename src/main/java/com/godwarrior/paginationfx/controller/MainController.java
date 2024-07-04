@@ -33,8 +33,8 @@ public class MainController {
             newTable.addColumn("Apellido", "telefono");
 
             newTable.addFilters(new ArrayList<>(Arrays.asList(
-                    new Filter("id", "number"),
-                    new Filter("name", "text")
+                    new Filter("Id de Usuario", "id", "number"),
+                    new Filter("Nombre de Usuario", "name", "text")
             )));
 
             VBox.setVgrow(paginationTable, Priority.ALWAYS);

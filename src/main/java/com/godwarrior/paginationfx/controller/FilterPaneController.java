@@ -5,6 +5,8 @@ import com.godwarrior.paginationfx.controller.component.FilterPaneSeparatorContr
 import com.godwarrior.paginationfx.models.Filter;
 import com.godwarrior.paginationfx.models.FilterApplied;
 import com.godwarrior.paginationfx.models.Operator;
+import com.godwarrior.paginationfx.models.Usuario;
+import com.godwarrior.paginationfx.utils.ReflectionUtils;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -170,10 +172,17 @@ public class FilterPaneController {
         String value = getFieldValue();
 
         if (selectedFilter != null && selectedOperator != null && value != null && !value.isEmpty()) {
+            String attributeLabel = ReflectionUtils.getColumnLabel(Usuario.class, selectedFilter.getAttributeClassName()); // Suponiendo que estás trabajando con la clase Usuario
             if (!appliedFilterContainer.getChildren().isEmpty()) {
                 addSeparator(null);
             }
-            addFilterComponent(new FilterApplied(selectedFilter.getAttributeName(), selectedOperator.getText(), selectedOperator.getSql(), value, this.attributeComboBox.getSelectionModel().getSelectedItem().getAttributeType()));
+            addFilterComponent(new FilterApplied(
+                    selectedFilter.getFilterNameSelect(),
+                    attributeLabel != null ? attributeLabel : selectedFilter.getAttributeClassName(), // Usar la etiqueta si está disponible, sino usar el nombre del atributo
+                    selectedOperator.getText(),
+                    selectedOperator.getSql(),
+                    value,
+                    this.attributeComboBox.getSelectionModel().getSelectedItem().getAttributeType()));
         }
     }
 

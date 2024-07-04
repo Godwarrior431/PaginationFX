@@ -6,26 +6,29 @@ import java.util.List;
 
 public class Filter {
 
-    private String attributeName;
+    private String attributeClassName;
     private String attributeType;
+    private String filterNameSelect;
     private List<Operator> operators;
 
-    public Filter(String attributeName, String attributeType) {
-        this.attributeName = attributeName;
+    public Filter(String filterNameSelect, String attributeName, String attributeType) {
+        this.filterNameSelect = filterNameSelect;
+        this.attributeClassName = attributeName;
         this.attributeType = attributeType;
         this.operators = SQLComparator.getOperatorsForType(attributeType);
     }
 
-    public String getAttributeName() {
-        return attributeName;
+    public String getAttributeClassName() {
+        return attributeClassName;
     }
+
     public String getAttributeType() {
         return attributeType;
     }
 
 
-    public void setAttributeName(String attributeName) {
-        this.attributeName = attributeName;
+    public void setAttributeClassName(String attributeClassName) {
+        this.attributeClassName = attributeClassName;
     }
 
     public List<Operator> getOperators() {
@@ -34,7 +37,14 @@ public class Filter {
 
     @Override
     public String toString() {
-        return attributeName;
+        return filterNameSelect;
     }
 
+    public String getFilterNameSelect() {
+        return filterNameSelect;
+    }
+
+    public void setFilterNameSelect(String filterNameSelect) {
+        this.filterNameSelect = filterNameSelect;
+    }
 }

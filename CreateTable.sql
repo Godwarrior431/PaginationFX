@@ -25,7 +25,7 @@ CREATE PROCEDURE InsertarUsuarios()
 BEGIN
     DECLARE i INT DEFAULT 1;
 
-    WHILE i <= 100
+    WHILE i <= 10000
         DO
             INSERT INTO usuario (nombre, apellido, email, fecha_nacimiento, telefono, direccion, ciudad, pais)
             VALUES (CONCAT('Nombre', i),
@@ -42,5 +42,6 @@ END$$
 
 DELIMITER ;
 
--- Llamar al procedimiento para insertar los 50 registros
+-- Llamar al procedimiento para insertar los 10000 registros
 CALL InsertarUsuarios();
+

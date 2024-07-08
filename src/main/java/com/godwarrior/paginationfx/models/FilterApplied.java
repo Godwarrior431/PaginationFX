@@ -26,24 +26,13 @@ public class FilterApplied {
         return attributeName;
     }
 
-    public void setAttributeName(String attributeName) {
-        this.attributeName = attributeName;
-    }
-
     public String getOperatorName() {
         return operatorName;
     }
 
-    public void setOperatorName(String operatorName) {
-        this.operatorName = operatorName;
-    }
 
     public String getValueQuery() {
         return valueQuery;
-    }
-
-    public void setValueQuery(String valueQuery) {
-        this.valueQuery = valueQuery;
     }
 
     @Override
@@ -60,18 +49,6 @@ public class FilterApplied {
         return queryOperatorQuery;
     }
 
-    public void setQueryOperatorQuery(String queryOperatorQuery) {
-        this.queryOperatorQuery = queryOperatorQuery;
-    }
-
-    public String getTypeFilter() {
-        return typeFilter;
-    }
-
-    public void setTypeFilter(String typeFilter) {
-        this.typeFilter = typeFilter;
-    }
-
     public String getFormattedValue() {
         switch (typeFilter) {
             case "text":
@@ -81,7 +58,6 @@ public class FilterApplied {
             case "number":
                 return valueQuery;
             case "bool":
-                // Convertir el valor booleano a 1 o 0
                 if (valueQuery != null && (valueQuery.equalsIgnoreCase("true") || valueQuery.equals("1"))) {
                     return "1";
                 } else {
@@ -96,7 +72,4 @@ public class FilterApplied {
         return filterNameSelect;
     }
 
-    public void setFilterNameSelect(String filterNameSelect) {
-        this.filterNameSelect = filterNameSelect;
-    }
 }

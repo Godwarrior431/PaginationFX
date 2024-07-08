@@ -25,8 +25,6 @@ public class SQLComparator {
                 operators.add(new Operator("greater than or equals", ">="));
                 operators.add(new Operator("less than or equals", "<="));
                 operators.add(new Operator("not equals", "<>"));
-                operators.add(new Operator("in", "IN"));
-                operators.add(new Operator("not in", "NOT IN"));
                 break;
             case "date":
                 operators.add(new Operator("equals", "="));

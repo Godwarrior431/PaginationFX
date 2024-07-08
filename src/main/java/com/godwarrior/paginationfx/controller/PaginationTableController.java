@@ -3,13 +3,13 @@ package com.godwarrior.paginationfx.controller;
 import com.godwarrior.paginationfx.database.mysql.MySQLSelect;
 import com.godwarrior.paginationfx.models.Filter;
 import com.godwarrior.paginationfx.models.FilterApplied;
+import com.godwarrior.paginationfx.utils.JavaUtils;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Region;
 import javafx.stage.Modality;
@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.IntStream;
 
 public class PaginationTableController<T> {
@@ -61,10 +60,10 @@ public class PaginationTableController<T> {
         this.objectType = objectType;
         this.dataBaseTable = dataBaseTable;
 
-        filterImgView.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/com/godwarrior/paginationfx/resources/icons/filterIcon.png"))));
-        resetFilterImgView.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/com/godwarrior/paginationfx/resources/icons/resetForms.png"))));
-        backPageImgView.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/com/godwarrior/paginationfx/resources/icons/backIcon.png"))));
-        nextPageImgView.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/com/godwarrior/paginationfx/resources/icons/nextIcon.png"))));
+        JavaUtils.setImage("/com/godwarrior/paginationfx/resources/icons/filterIcon.png", filterImgView);
+        JavaUtils.setImage("/com/godwarrior/paginationfx/resources/icons/resetForms.png", resetFilterImgView);
+        JavaUtils.setImage("/com/godwarrior/paginationfx/resources/icons/backIcon.png", backPageImgView);
+        JavaUtils.setImage("/com/godwarrior/paginationfx/resources/icons/nextIcon.png", nextPageImgView);
 
         queryBase = "SELECT * FROM " + this.dataBaseTable;
         queryDefault = queryBase;
@@ -232,14 +231,12 @@ public class PaginationTableController<T> {
                         .append(" ").append(filter.getFormattedValue());
 
                 firstCondition = false;
-                previousLogicalOperator = "AND"; // Default logical operator is "AND"
+                previousLogicalOperator = "AND";
             } else if (filter.getQueryOperatorQuery() != null && !filter.getQueryOperatorQuery().isEmpty()) {
-                // If only the logical operator is provided
                 previousLogicalOperator = filter.getQueryOperatorQuery().toUpperCase().trim();
             }
         }
 
-        // Removing trailing logical operators if present
         String query = queryBuilder.toString().trim();
         if (query.endsWith("AND") || query.endsWith("OR")) {
             query = query.substring(0, query.length() - 3).trim();

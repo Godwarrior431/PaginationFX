@@ -13,10 +13,7 @@ public class FilterPaneSeparatorController {
 
     @FXML
     public void initialize() {
-        // Set the default selection to "orCheckBox"
         orCheckBox.setSelected(true);
-
-        // Add listeners to ensure only one checkbox is selected at a time
         andCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue) {
                 orCheckBox.setSelected(false);
@@ -33,7 +30,7 @@ public class FilterPaneSeparatorController {
             }
         });
     }
- 
+
     public CheckBox getAndCheckBox() {
         return andCheckBox;
     }

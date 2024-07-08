@@ -38,8 +38,16 @@ public class FilterPaneComponentController {
 
         FilterNameSelectLabel.setText(filterApplied.getFilterNameSelect());
         operatorLabel.setText(filterApplied.getOperatorName());
-        valueTextLabel.setText(filterApplied.getValueQuery());
+
+        String valueQuery = filterApplied.getValueQuery();
+
+        if (valueQuery != null) {
+            valueQuery = valueQuery.replaceAll("^%+|%+$", "");
+        }
+
+        valueTextLabel.setText(valueQuery);
     }
+
 
     public void setParentController(FilterPaneController parentController) {
         this.parentController = parentController;
@@ -48,16 +56,12 @@ public class FilterPaneComponentController {
     @FXML
     void deleteFilter(ActionEvent event) {
         Button button = (Button) event.getSource();
-        HBox filterComponent = (HBox) button.getParent().getParent(); // Ajuste para obtener el componente adecuado
+        HBox filterComponent = (HBox) button.getParent().getParent();
         parentController.removeFilterComponent(filterComponent);
     }
-
-
+    
     public FilterApplied getFilterApplied() {
         return filterApplied;
     }
 
-    public void setFilterApplied(FilterApplied filterApplied) {
-        this.filterApplied = filterApplied;
-    }
 }

@@ -22,7 +22,6 @@ public class MainController {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/godwarrior/paginationfx/resources/view/PaginationTableView.fxml"));
             Node paginationTable = loader.load();
 
-
             ConnectionMSQL.getInstance("localhost", "paginationtest", "root", "");
 
             PaginationTableController newTable = loader.getController();
@@ -30,11 +29,13 @@ public class MainController {
 
             newTable.addColumn("Identificador", "id");
             newTable.addColumn("Nombre", "name");
-            newTable.addColumn("Apellido", "telefono");
+            newTable.addColumn("Apellido", "apellido");
+            newTable.addColumn("Telefono", "telefono");
 
             newTable.addFilters(new ArrayList<>(Arrays.asList(
                     new Filter("Id de Usuario", "id", "number"),
-                    new Filter("Nombre de Usuario", "name", "text")
+                    new Filter("Nombre de Usuario", "name", "text"),
+                    new Filter("Telefono de Usuario", "telefono", "text")
             )));
 
             VBox.setVgrow(paginationTable, Priority.ALWAYS);

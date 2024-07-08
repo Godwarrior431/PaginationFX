@@ -6,7 +6,7 @@ import com.godwarrior.paginationfx.models.Filter;
 import com.godwarrior.paginationfx.models.FilterApplied;
 import com.godwarrior.paginationfx.models.Operator;
 import com.godwarrior.paginationfx.models.Usuario;
-import com.godwarrior.paginationfx.utils.ReflectionUtils;
+import com.godwarrior.paginationfx.utils.JavaUtils;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -15,7 +15,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -25,7 +24,6 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.regex.Pattern;
 
 public class FilterPaneController {
@@ -56,9 +54,10 @@ public class FilterPaneController {
     @FXML
     public void initialize(List<Filter> filterList, List<FilterApplied> filterAppliedList) {
         this.currentFiltersApplied = filterAppliedList;
-        addFilterImgView.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/com/godwarrior/paginationfx/resources/icons/addIcon.png"))));
-        filterImgView.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/com/godwarrior/paginationfx/resources/icons/addFilterIcon.png"))));
-        resetFilterImgView.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/com/godwarrior/paginationfx/resources/icons/resetForms.png"))));
+
+        JavaUtils.setImage("/com/godwarrior/paginationfx/resources/icons/addIcon.png", addFilterImgView);
+        JavaUtils.setImage("/com/godwarrior/paginationfx/resources/icons/addFilterIcon.png", filterImgView);
+        JavaUtils.setImage("/com/godwarrior/paginationfx/resources/icons/resetForms.png", resetFilterImgView);
 
         ObservableList<Filter> filters = FXCollections.observableArrayList(filterList);
         attributeComboBox.setItems(filters);
@@ -145,9 +144,7 @@ public class FilterPaneController {
 
     private CheckBox createCheckBox() {
         CheckBox checkBox = new CheckBox("False");
-        checkBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            checkBox.setText(newValue ? "True" : "False");
-        });
+        checkBox.selectedProperty().addListener((observable, oldValue, newValue) -> checkBox.setText(newValue ? "True" : "False"));
         return checkBox;
     }
 
@@ -155,10 +152,8 @@ public class FilterPaneController {
         int index = appliedFilterContainer.getChildren().indexOf(filterComponent);
 
         if (index > 0 && appliedFilterContainer.getChildren().get(index - 1) instanceof HBox) {
-            // Remove the separator before the filter component
             appliedFilterContainer.getChildren().remove(index - 1);
         } else if (index < appliedFilterContainer.getChildren().size() - 1 && appliedFilterContainer.getChildren().get(index + 1) instanceof HBox) {
-            // Remove the separator after the filter component if there is no component before it
             appliedFilterContainer.getChildren().remove(index + 1);
         }
 
@@ -172,27 +167,21 @@ public class FilterPaneController {
         String value = getFieldValue();
 
         if (selectedFilter != null && selectedOperator != null && value != null && !value.isEmpty()) {
-            String attributeLabel = ReflectionUtils.getColumnLabel(Usuario.class, selectedFilter.getAttributeClassName()); // Suponiendo que estás trabajando con la clase Usuario
+            String attributeLabel = JavaUtils.getColumnLabel(Usuario.class, selectedFilter.getAttributeClassName());
 
-            // Ajustar el valor según el operador
-            switch (selectedOperator.getText().toLowerCase()) {
-                case "starts with":
-                    value = value + "%";
-                    break;
-                case "ends with":
-                    value = "%" + value;
-                    break;
-                case "contains":
-                    value = "%" + value + "%";
-                    break;
-            }
+            value = switch (selectedOperator.getText().toLowerCase()) {
+                case "starts with" -> value + "%";
+                case "ends with" -> "%" + value;
+                case "contains" -> "%" + value + "%";
+                default -> value;
+            };
 
             if (!appliedFilterContainer.getChildren().isEmpty()) {
                 addSeparator(null);
             }
             addFilterComponent(new FilterApplied(
                     selectedFilter.getFilterNameSelect(),
-                    attributeLabel != null ? attributeLabel : selectedFilter.getAttributeClassName(), // Usar la etiqueta si está disponible, sino usar el nombre del atributo
+                    attributeLabel != null ? attributeLabel : selectedFilter.getAttributeClassName(),
                     selectedOperator.getText(),
                     selectedOperator.getSql(),
                     value,
@@ -273,7 +262,7 @@ public class FilterPaneController {
     }
 
     @FXML
-    void applyFilters(ActionEvent event) {
+    void applyFilters() {
         currentFiltersApplied.clear();
 
         for (Node node : appliedFilterContainer.getChildren()) {

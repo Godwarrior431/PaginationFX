@@ -1,6 +1,6 @@
 package com.godwarrior.paginationfx.database.mysql;
 
-import com.godwarrior.paginationfx.utils.ReflectionUtils;
+import com.godwarrior.paginationfx.utils.JavaUtils;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -45,10 +45,9 @@ public class MySQLSelect {
                 for (Field field : clazz.getDeclaredFields()) {
                     field.setAccessible(true);
 
-                    // Use ReflectionUtils to get the column name
-                    String columnName = ReflectionUtils.getColumnLabel(clazz, field.getName());
+                    String columnName = JavaUtils.getColumnLabel(clazz, field.getName());
                     if (columnName == null) {
-                        columnName = field.getName(); // Fallback to field name if no annotation is present
+                        columnName = field.getName();
                     }
 
                     Object value = resultSet.getObject(columnName);

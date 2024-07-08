@@ -28,6 +28,7 @@ public class PaginationTableController<T> {
     private String dataBaseTable;
     private String queryBase;
     private String query;
+    private String queryDefault;
     private int currentPage = 1;
     private final int itemsPerPage = 10;
     private int totalItems = 0;
@@ -66,6 +67,8 @@ public class PaginationTableController<T> {
         nextPageImgView.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/com/godwarrior/paginationfx/resources/icons/nextIcon.png"))));
 
         queryBase = "SELECT * FROM " + this.dataBaseTable;
+        queryDefault = queryBase;
+
 
         totalItems = MySQLSelect.countRows("SELECT COUNT(*) FROM " + this.dataBaseTable);
         totalPages = (int) Math.ceil((double) totalItems / itemsPerPage);
@@ -74,10 +77,13 @@ public class PaginationTableController<T> {
         pageSelectComboBox.setValue(currentPage);
 
         pageSelectComboBox.setOnAction(event -> {
-            currentPage = pageSelectComboBox.getValue();
-            updateQuery();
-            loadPage();
-            updateButtonStates();
+            Integer selectedPage = pageSelectComboBox.getValue();
+            if (selectedPage != null) {
+                currentPage = selectedPage;
+                updateQuery();
+                loadPage();
+                updateButtonStates();
+            }
         });
 
         updateQuery();
@@ -124,8 +130,15 @@ public class PaginationTableController<T> {
 
     @FXML
     private void resetFilter() {
-        queryBase = "SELECT * FROM " + this.dataBaseTable;
+        queryBase = queryDefault;
         currentPage = 1;
+
+        totalItems = MySQLSelect.countRows("SELECT COUNT(*) FROM " + this.dataBaseTable);
+        totalPages = (int) Math.ceil((double) totalItems / itemsPerPage);
+
+        pageSelectComboBox.getItems().clear();
+        pageSelectComboBox.getItems().addAll(IntStream.rangeClosed(1, totalPages).boxed().toList());
+        pageSelectComboBox.setValue(currentPage);
         updateQuery();
         loadPage();
         pageSelectComboBox.setValue(currentPage);
@@ -177,40 +190,62 @@ public class PaginationTableController<T> {
             stageAux.showAndWait();
             appliedFilters = FilterPane.getCurrentFiltersApplied();
 
-            // Reconstruir la consulta con los filtros y paginación
-            query = buildQueryWithFilters();
+            queryBase = buildQueryWithFilters();
 
-            System.out.println(query);
+            System.out.println(queryBase);
 
-            // Actualizar la página con la nueva consulta
+            totalItems = MySQLSelect.countRows("SELECT COUNT(*) FROM (" + queryBase + ") AS countQuery");
+            totalPages = (int) Math.ceil((double) totalItems / itemsPerPage);
+
+            pageSelectComboBox.getItems().clear();
+            pageSelectComboBox.getItems().addAll(IntStream.rangeClosed(1, totalPages).boxed().toList());
+            pageSelectComboBox.setValue(currentPage);
+
+            updateQuery();
             loadPage();
+            updateButtonStates();
+
         }
     }
 
 
     private String buildQueryWithFilters() {
-        StringBuilder queryBuilder = new StringBuilder(queryBase);
+        StringBuilder queryBuilder = new StringBuilder(queryDefault);
         boolean firstCondition = true;
         boolean whereAdded = false;
+        String previousLogicalOperator = "";
 
         for (FilterApplied filter : appliedFilters) {
-            if (filter.getAttributeName() != null && !filter.getAttributeName().isEmpty()) {
+            if (filter.getAttributeName() != null && !filter.getAttributeName().isEmpty() &&
+                    filter.getQueryOperatorQuery() != null && !filter.getQueryOperatorQuery().isEmpty() &&
+                    filter.getFormattedValue() != null && !filter.getFormattedValue().isEmpty()) {
+
                 if (firstCondition && !whereAdded) {
                     queryBuilder.append(" WHERE ");
                     whereAdded = true;
-                } else {
-                    queryBuilder.append(" AND ");
+                } else if (!firstCondition) {
+                    queryBuilder.append(" ").append(previousLogicalOperator).append(" ");
                 }
+
                 queryBuilder.append(filter.getAttributeName())
                         .append(" ").append(filter.getQueryOperatorQuery())
                         .append(" ").append(filter.getFormattedValue());
+
                 firstCondition = false;
+                previousLogicalOperator = "AND"; // Default logical operator is "AND"
             } else if (filter.getQueryOperatorQuery() != null && !filter.getQueryOperatorQuery().isEmpty()) {
-                queryBuilder.append(" ").append(filter.getQueryOperatorQuery()).append(" ");
+                // If only the logical operator is provided
+                previousLogicalOperator = filter.getQueryOperatorQuery().toUpperCase().trim();
             }
         }
 
-        return queryBuilder.toString();
+        // Removing trailing logical operators if present
+        String query = queryBuilder.toString().trim();
+        if (query.endsWith("AND") || query.endsWith("OR")) {
+            query = query.substring(0, query.length() - 3).trim();
+        }
+
+        return query;
     }
 
 

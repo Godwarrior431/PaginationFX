@@ -173,6 +173,20 @@ public class FilterPaneController {
 
         if (selectedFilter != null && selectedOperator != null && value != null && !value.isEmpty()) {
             String attributeLabel = ReflectionUtils.getColumnLabel(Usuario.class, selectedFilter.getAttributeClassName()); // Suponiendo que estás trabajando con la clase Usuario
+
+            // Ajustar el valor según el operador
+            switch (selectedOperator.getText().toLowerCase()) {
+                case "starts with":
+                    value = value + "%";
+                    break;
+                case "ends with":
+                    value = "%" + value;
+                    break;
+                case "contains":
+                    value = "%" + value + "%";
+                    break;
+            }
+
             if (!appliedFilterContainer.getChildren().isEmpty()) {
                 addSeparator(null);
             }
@@ -215,7 +229,6 @@ public class FilterPaneController {
             if ("AND".equals(operator)) {
                 separatorController.getAndCheckBox().setSelected(true);
             } else {
-                // Default to OR if no operator is provided
                 separatorController.getOrCheckBox().setSelected(true);
             }
 
@@ -264,22 +277,16 @@ public class FilterPaneController {
         currentFiltersApplied.clear();
 
         for (Node node : appliedFilterContainer.getChildren()) {
-            if (node instanceof Pane && node.getProperties().get("controller") instanceof FilterPaneComponentController) {
-                FilterPaneComponentController componentController = (FilterPaneComponentController) node.getProperties().get("controller");
-                if (componentController != null) {
-                    FilterApplied filterApplied = componentController.getFilterApplied();
-                    if (filterApplied != null) {
-                        currentFiltersApplied.add(filterApplied);
-                    }
+            if (node instanceof Pane && node.getProperties().get("controller") instanceof FilterPaneComponentController componentController) {
+                FilterApplied filterApplied = componentController.getFilterApplied();
+                if (filterApplied != null) {
+                    currentFiltersApplied.add(filterApplied);
                 }
-            } else if (node instanceof HBox && node.getProperties().get("controller") instanceof FilterPaneSeparatorController) {
-                FilterPaneSeparatorController separatorController = (FilterPaneSeparatorController) node.getProperties().get("controller");
-                if (separatorController != null) {
-                    if (separatorController.getAndCheckBox().isSelected()) {
-                        currentFiltersApplied.add(new FilterApplied("AND"));
-                    } else if (separatorController.getOrCheckBox().isSelected()) {
-                        currentFiltersApplied.add(new FilterApplied("OR"));
-                    }
+            } else if (node instanceof HBox && node.getProperties().get("controller") instanceof FilterPaneSeparatorController separatorController) {
+                if (separatorController.getAndCheckBox().isSelected()) {
+                    currentFiltersApplied.add(new FilterApplied("AND"));
+                } else if (separatorController.getOrCheckBox().isSelected()) {
+                    currentFiltersApplied.add(new FilterApplied("OR"));
                 }
             }
         }

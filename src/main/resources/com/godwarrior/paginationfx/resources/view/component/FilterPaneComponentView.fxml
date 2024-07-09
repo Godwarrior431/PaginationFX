@@ -1,29 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.Cursor?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.text.Font?>
-
-<HBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="85.0" prefWidth="517.0" style="-fx-background-color: #93A3D8; -fx-border-color: #dbdbdb; -fx-border-width: 4px; -fx-border-radius: 10; -fx-background-radius: 10;" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.godwarrior.paginationfx.controller.component.FilterPaneComponentController">
+<HBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+      prefHeight="85.0" prefWidth="517.0"
+      style="-fx-background-color: #93A3D8; -fx-border-color: #dbdbdb; -fx-border-width: 4px; -fx-border-radius: 10; -fx-background-radius: 10;"
+      xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.godwarrior.paginationfx.controller.component.FilterPaneComponentController">
     <children>
         <HBox alignment="CENTER" spacing="25.0" HBox.hgrow="ALWAYS">
             <children>
-                <Label fx:id="FilterNameSelectLabel" alignment="CENTER" maxHeight="1.7976931348623157E308" text="Atributo" textAlignment="CENTER" wrapText="true">
+                <Label fx:id="filterNameSelectLabel" alignment="CENTER" maxHeight="1.7976931348623157E308"
+                       text="Atributo" textAlignment="CENTER" wrapText="true">
                     <font>
-                        <Font size="17.0" />
+                        <Font size="17.0"/>
                     </font>
                 </Label>
-                <Label fx:id="operatorLabel" alignment="CENTER" maxHeight="1.7976931348623157E308" text="Operator" textAlignment="CENTER" wrapText="true">
+                <Label fx:id="operatorLabel" alignment="CENTER" maxHeight="1.7976931348623157E308" text="Operator"
+                       textAlignment="CENTER" wrapText="true">
                     <font>
-                        <Font name="System Bold Italic" size="17.0" />
+                        <Font name="System Bold Italic" size="17.0"/>
                     </font>
                 </Label>
-                <Label fx:id="valueTextLabel" alignment="CENTER" maxHeight="1.7976931348623157E308" text="StringBusqueda" textAlignment="CENTER" wrapText="true">
+                <Label fx:id="valueTextLabel" alignment="CENTER" maxHeight="1.7976931348623157E308"
+                       text="StringBusqueda" textAlignment="CENTER" wrapText="true">
                     <font>
-                        <Font size="17.0" />
+                        <Font size="17.0"/>
                     </font>
                 </Label>
             </children>
@@ -32,10 +38,11 @@
             <children>
                 <Button contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false" onAction="#deleteFilter" text="Button">
                     <graphic>
-                        <ImageView fx:id="deleteImgView" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" />
+                        <ImageView fx:id="deleteImgView" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true"
+                                   preserveRatio="true"/>
                     </graphic>
                     <cursor>
-                        <Cursor fx:constant="HAND" />
+                        <Cursor fx:constant="HAND"/>
                     </cursor>
                 </Button>
             </children>

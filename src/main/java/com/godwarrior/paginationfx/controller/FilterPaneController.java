@@ -82,26 +82,26 @@ public class FilterPaneController {
 
     private void createFieldForType(String type) {
         fieldContainer.getChildren().clear();
-
+        String styleToApply = "-fx-pref-height: 35px; -fx-font-size: 15px;";
         switch (type.toLowerCase()) {
             case "text":
                 TextField textField = createTextField("[a-zA-Z\\dáéíóúÁÉÍÓÚñÑ ]*");
-                textField.setStyle("-fx-pref-height: 35px; -fx-font-size: 15px;");
+                textField.setStyle(styleToApply);
                 fieldContainer.getChildren().add(textField);
                 break;
             case "number":
                 TextField numberField = createTextField("\\d*");
-                numberField.setStyle("-fx-pref-height: 35px; -fx-font-size: 15px;");
+                numberField.setStyle(styleToApply);
                 fieldContainer.getChildren().add(numberField);
                 break;
             case "date":
                 DatePicker datePicker = createDatePicker();
-                datePicker.setStyle("-fx-pref-height: 35px; -fx-font-size: 15px;");
+                datePicker.setStyle(styleToApply);
                 fieldContainer.getChildren().add(datePicker);
                 break;
             case "time":
                 HBox timeFields = createTimeFields();
-                timeFields.setStyle("-fx-pref-height: 35px; -fx-font-size: 15px;");
+                timeFields.setStyle(styleToApply);
                 fieldContainer.getChildren().add(timeFields);
                 break;
             case "bool":
@@ -167,7 +167,7 @@ public class FilterPaneController {
     }
 
     private CheckBox createCheckBox() {
-        CheckBox checkBox = new CheckBox("False");
+        CheckBox checkBox = new CheckBox();
         checkBox.selectedProperty().addListener((observable, oldValue, newValue) -> checkBox.setText(newValue ? "True" : "False"));
         checkBox.setStyle("-fx-font-size: 17px; -fx-font-weight: bold;");
         return checkBox;
@@ -253,8 +253,7 @@ public class FilterPaneController {
 
     private String getFieldValue() {
         switch (attributeComboBox.getSelectionModel().getSelectedItem().getAttributeType().toLowerCase()) {
-            case "text":
-            case "number":
+            case "number", "text":
                 TextField textField = (TextField) fieldContainer.getChildren().get(0);
                 return textField.getText();
             case "date":

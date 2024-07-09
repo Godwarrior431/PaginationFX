@@ -17,7 +17,7 @@ public class FilterPaneComponentController {
     private FilterPaneController parentController;
 
     @FXML
-    private Label FilterNameSelectLabel;
+    private Label filterNameSelectLabel;
 
     @FXML
     private ImageView deleteImgView;
@@ -36,13 +36,18 @@ public class FilterPaneComponentController {
         this.filterApplied = filterApplied;
         deleteImgView.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/com/godwarrior/paginationfx/resources/icons/deleteIcon.png"))));
 
-        FilterNameSelectLabel.setText(filterApplied.getFilterNameSelect());
+        filterNameSelectLabel.setText(filterApplied.getFilterNameSelect());
         operatorLabel.setText(filterApplied.getOperatorName());
 
         String valueQuery = filterApplied.getValueQuery();
 
         if (valueQuery != null) {
-            valueQuery = valueQuery.replaceAll("^%+|%+$", "");
+            while (valueQuery.startsWith("%")) {
+                valueQuery = valueQuery.substring(1);
+            }
+            while (valueQuery.endsWith("%")) {
+                valueQuery = valueQuery.substring(0, valueQuery.length() - 1);
+            }
         }
 
         valueTextLabel.setText(valueQuery);
@@ -59,7 +64,7 @@ public class FilterPaneComponentController {
         HBox filterComponent = (HBox) button.getParent().getParent();
         parentController.removeFilterComponent(filterComponent);
     }
-    
+
     public FilterApplied getFilterApplied() {
         return filterApplied;
     }

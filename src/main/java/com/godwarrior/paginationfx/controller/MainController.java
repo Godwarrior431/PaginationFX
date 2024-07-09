@@ -14,7 +14,7 @@ import java.util.Arrays;
 
 public class MainController {
     @FXML
-    private VBox vboxConteiner;
+    private VBox vboxContainer;
 
     @FXML
     public void initialize() {
@@ -24,7 +24,7 @@ public class MainController {
 
             ConnectionMSQL.getInstance("localhost", "paginationtest", "root", "");
 
-            PaginationTableController newTable = loader.getController();
+            PaginationTableController<Usuario> newTable = loader.getController();
             newTable.initialize(Usuario.class, "usuario");
 
             newTable.addColumn("Identificador", "id");
@@ -35,7 +35,6 @@ public class MainController {
             newTable.addColumn("¿Esta activo?", "activo");
             newTable.addColumn("Hora de Registro", "horaRegistro");
 
-
             newTable.addFilters(new ArrayList<>(Arrays.asList(
                     new Filter("Id de Usuario", "id", "number"),
                     new Filter("Nombre de Usuario", "nombre", "text"),
@@ -43,11 +42,10 @@ public class MainController {
                     new Filter("¿Esta activo?", "activo", "bool"),
                     new Filter("Fecha de Nacimiento", "fechaNacimiento", "date"),
                     new Filter("Horario de Registro", "horaRegistro", "time")
-
             )));
 
             VBox.setVgrow(paginationTable, Priority.ALWAYS);
-            vboxConteiner.getChildren().add(paginationTable);
+            vboxContainer.getChildren().add(paginationTable);
 
         } catch (Exception e) {
             e.printStackTrace();

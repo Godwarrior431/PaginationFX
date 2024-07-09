@@ -19,6 +19,8 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -70,7 +72,6 @@ public class FilterPaneController {
         });
 
         attributeComboBox.getSelectionModel().selectFirst();
-
         fillAppliedFilters();
     }
 
@@ -130,18 +131,38 @@ public class FilterPaneController {
     }
 
     private DatePicker createDatePicker() {
-        return new DatePicker();
+        DatePicker datePicker = new DatePicker();
+        datePicker.setEditable(false);
+        return datePicker;
     }
 
     private HBox createTimeFields() {
-        TextField hoursField = createTextField("\\d*");
-        TextField minutesField = createTextField("\\d*");
-
+        TextField hoursField = new TextField();
         hoursField.setPromptText("HH");
-        minutesField.setPromptText("MM");
+        hoursField.setStyle("-fx-font-size: 16px;");
+        hoursField.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue.matches("\\d{0,2}")) {
+                hoursField.setText(oldValue);
+            }
+        });
 
-        HBox timeFields = new HBox(hoursField, new Label(":"), minutesField);
+        TextField minutesField = new TextField();
+        minutesField.setPromptText("MM");
+        minutesField.setStyle("-fx-font-size: 16px;");
+        minutesField.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue.matches("\\d{0,2}")) {
+                minutesField.setText(oldValue);
+            }
+        });
+
+        Label separator = new Label(":");
+        separator.setFont(Font.font("System", FontWeight.BOLD, 18));
+        separator.setPrefWidth(10);
+
+        HBox timeFields = new HBox(hoursField, separator, minutesField);
         timeFields.setAlignment(Pos.CENTER);
+        timeFields.setSpacing(5);
+
         return timeFields;
     }
 
@@ -191,7 +212,6 @@ public class FilterPaneController {
                     this.attributeComboBox.getSelectionModel().getSelectedItem().getAttributeType()));
         }
     }
-
 
     private void addFilterComponent(FilterApplied filterApplied) {
         try {

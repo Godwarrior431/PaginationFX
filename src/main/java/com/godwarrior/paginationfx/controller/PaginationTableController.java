@@ -98,6 +98,27 @@ public class PaginationTableController<T> {
         loadPage();
 
         updateButtonStates();
+        adjustFontSizeDynamically();
+    }
+
+    private void adjustFontSizeDynamically() {
+        Scene scene = filterTableView.getScene();
+        if (scene != null) {
+            bindFontSize(scene);
+        } else {
+            filterTableView.sceneProperty().addListener((obs, oldScene, newScene) -> {
+                if (newScene != null) {
+                    bindFontSize(newScene);
+                }
+            });
+        }
+    }
+
+    private void bindFontSize(Scene scene) {
+        scene.heightProperty().addListener((observable, oldHeight, newHeight) -> {
+            double fontSize = newHeight.doubleValue() * 0.02;
+            filterTableView.setStyle("-fx-font-size: " + fontSize + "px;");
+        });
     }
 
     public void addFilters(ArrayList<Filter> listFilters) {

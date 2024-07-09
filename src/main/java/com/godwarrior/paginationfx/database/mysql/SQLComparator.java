@@ -28,14 +28,15 @@ public class SQLComparator {
                 break;
             case "date":
                 operators.add(new Operator("equals", "="));
-                operators.add(new Operator("greater than", ">"));
-                operators.add(new Operator("less than", "<"));
-                operators.add(new Operator("between", "BETWEEN"));
+                operators.add(new Operator("is after", ">"));
+                operators.add(new Operator("is before", "<"));
+                operators.add(new Operator("is on or after", ">="));
+                operators.add(new Operator("is on or before", "<="));
                 break;
             case "time":
                 operators.add(new Operator("equals", "="));
-                operators.add(new Operator("greater than", ">"));
-                operators.add(new Operator("less than", "<"));
+                operators.add(new Operator("is after", "> TIME"));
+                operators.add(new Operator("is before", "< TIME"));
                 break;
             case "bool":
                 operators.add(new Operator("equals", "="));

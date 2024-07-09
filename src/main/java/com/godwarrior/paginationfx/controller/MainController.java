@@ -40,7 +40,9 @@ public class MainController {
                     new Filter("Id de Usuario", "id", "number"),
                     new Filter("Nombre de Usuario", "nombre", "text"),
                     new Filter("Telefono de Usuario", "telefono", "number"),
-                    new Filter("¿Esta activo?", "activo", "bool")
+                    new Filter("¿Esta activo?", "activo", "bool"),
+                    new Filter("Fecha de Nacimiento", "fechaNacimiento", "date"),
+                    new Filter("Horario de Registro", "horaRegistro", "time")
 
             )));
 

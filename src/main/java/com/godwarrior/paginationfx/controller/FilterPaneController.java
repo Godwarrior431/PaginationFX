@@ -169,6 +169,7 @@ public class FilterPaneController {
     private CheckBox createCheckBox() {
         CheckBox checkBox = new CheckBox("False");
         checkBox.selectedProperty().addListener((observable, oldValue, newValue) -> checkBox.setText(newValue ? "True" : "False"));
+        checkBox.setStyle("-fx-font-size: 17px; -fx-font-weight: bold;");
         return checkBox;
     }
 
@@ -302,11 +303,6 @@ public class FilterPaneController {
                 }
             }
         }
-
-        for (FilterApplied filter : currentFiltersApplied) {
-            System.out.println("Filter Applied: " + filter.getAttributeName() + " " + filter.getOperatorName() + " " + filter.getQueryOperatorQuery() + " " + filter.getValueQuery());
-        }
-
         Stage stage = (Stage) attributeComboBox.getScene().getWindow();
         stage.close();
     }

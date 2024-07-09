@@ -39,7 +39,7 @@ public class SQLComparator {
                 operators.add(new Operator("is before", "< TIME"));
                 break;
             case "bool":
-                operators.add(new Operator("equals", "="));
+                operators.add(new Operator("is", "="));
                 break;
             default:
                 throw new IllegalArgumentException("Invalid data type for SQL comparators: " + type);

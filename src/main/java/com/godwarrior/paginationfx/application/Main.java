@@ -1,4 +1,4 @@
-package com.godwarrior.paginationfx.main;
+package com.godwarrior.paginationfx.application;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -16,6 +16,8 @@ public class Main extends Application {
         scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/com/godwarrior/paginationfx/resources/styles/style.css")).toExternalForm());
         stage.setTitle("TestPagination");
         stage.setScene(scene);
+        stage.setMinWidth(800);
+        stage.setMinHeight(600);
         stage.show();
     }
 

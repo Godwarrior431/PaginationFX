@@ -40,13 +40,10 @@ public class PaginationTableController<T> {
     private Stage stageAux;
 
     @FXML
-    private ImageView backPageImgView, nextPageImgView;
+    private ImageView backPageImgView, nextPageImgView, filterImgView, resetFilterImgView;
 
     @FXML
-    private ImageView filterImgView, resetFilterImgView;
-
-    @FXML
-    private TableView<T> filterTableView = new TableView<>();
+    private TableView<T> filterTableView;
 
     @FXML
     private Button goBackPageButton, goNextPageButton;
@@ -61,16 +58,8 @@ public class PaginationTableController<T> {
         this.objectType = objectType;
         this.dataBaseTable = dataBaseTable;
 
-        JavaUtils.setImage("/com/godwarrior/paginationfx/resources/icons/filterIcon.png", filterImgView);
-        JavaUtils.setImage("/com/godwarrior/paginationfx/resources/icons/resetForms.png", resetFilterImgView);
-        JavaUtils.setImage("/com/godwarrior/paginationfx/resources/icons/backIcon.png", backPageImgView);
-        JavaUtils.setImage("/com/godwarrior/paginationfx/resources/icons/nextIcon.png", nextPageImgView);
-
-        filterTableView.setRowFactory(tv -> {
-            TableRow<T> row = new TableRow<>();
-            row.prefHeightProperty().bind(filterTableView.heightProperty().divide(itemsPerPage + 0.70));
-            return row;
-        });
+        initializeImageViews();
+        initializeTableView();
 
         queryBase = "SELECT * FROM " + this.dataBaseTable;
         queryDefault = queryBase;
@@ -93,12 +82,25 @@ public class PaginationTableController<T> {
 
         filterTableView.getItems().addListener((ListChangeListener<T>) change -> updateEmptyState());
 
-
         updateQuery();
         loadPage();
-
         updateButtonStates();
         adjustFontSizeDynamically();
+    }
+
+    private void initializeImageViews() {
+        JavaUtils.setImage("/com/godwarrior/paginationfx/resources/icons/filterIcon.png", filterImgView);
+        JavaUtils.setImage("/com/godwarrior/paginationfx/resources/icons/resetForms.png", resetFilterImgView);
+        JavaUtils.setImage("/com/godwarrior/paginationfx/resources/icons/backIcon.png", backPageImgView);
+        JavaUtils.setImage("/com/godwarrior/paginationfx/resources/icons/nextIcon.png", nextPageImgView);
+    }
+
+    private void initializeTableView() {
+        filterTableView.setRowFactory(tv -> {
+            TableRow<T> row = new TableRow<>();
+            row.prefHeightProperty().bind(filterTableView.heightProperty().divide(itemsPerPage + 0.60));
+            return row;
+        });
     }
 
     private void adjustFontSizeDynamically() {
@@ -171,14 +173,14 @@ public class PaginationTableController<T> {
         pageSelectComboBox.setValue(currentPage);
         updateQuery();
         loadPage();
-        pageSelectComboBox.setValue(currentPage);
         updateButtonStates();
         appliedFilters.clear();
     }
 
     private void updateButtonStates() {
-        goNextPageButton.setDisable(currentPage >= totalPages || filterTableView.getItems().isEmpty());
-        goBackPageButton.setDisable(currentPage <= 1 || filterTableView.getItems().isEmpty());
+        boolean isEmpty = filterTableView.getItems().isEmpty();
+        goNextPageButton.setDisable(currentPage >= totalPages || isEmpty);
+        goBackPageButton.setDisable(currentPage <= 1 || isEmpty);
     }
 
     private void updateEmptyState() {
@@ -196,7 +198,7 @@ public class PaginationTableController<T> {
                 Field field = cellData.getValue().getClass().getDeclaredField(attributeName);
                 field.setAccessible(true);
                 return new SimpleStringProperty(String.valueOf(field.get(cellData.getValue())));
-            } catch (IllegalAccessException | NoSuchFieldException e) {
+            } catch (ReflectiveOperationException e) {
                 e.printStackTrace();
                 return new SimpleStringProperty("Error");
             }
@@ -207,14 +209,14 @@ public class PaginationTableController<T> {
 
     @FXML
     public void showFilters() throws IOException {
-        if (stageAux != null && stageAux.isShowing())
+        if (stageAux != null && stageAux.isShowing()) {
             stageAux.toFront();
-        else {
+        } else {
             stageAux = new Stage();
             stageAux.resizableProperty().setValue(Boolean.FALSE);
 
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/godwarrior/paginationfx/resources/view/FilterPaneView.fxml"));
-            Region root = (Region) loader.load();
+            Region root = loader.load();
             Scene scene = new Scene(root);
 
             stageAux.setTitle("Filters");
@@ -223,14 +225,13 @@ public class PaginationTableController<T> {
 
             stageAux.initModality(Modality.APPLICATION_MODAL);
 
-            FilterPaneController FilterPane = loader.<FilterPaneController>getController();
-            FilterPane.initialize(this.listFilters, appliedFilters);
+            FilterPaneController filterPaneController = loader.getController();
+            filterPaneController.initialize(this.listFilters, appliedFilters);
+
             stageAux.showAndWait();
-            appliedFilters = FilterPane.getCurrentFiltersApplied();
+            appliedFilters = filterPaneController.getCurrentFiltersApplied();
 
             queryBase = buildQueryWithFilters();
-
-            System.out.println(queryBase);
 
             totalItems = MySQLSelect.countRows("SELECT COUNT(*) FROM (" + queryBase + ") AS countQuery");
             totalPages = (int) Math.ceil((double) totalItems / itemsPerPage);
@@ -244,7 +245,6 @@ public class PaginationTableController<T> {
             updateQuery();
             loadPage();
             updateButtonStates();
-
         }
     }
 
@@ -255,10 +255,7 @@ public class PaginationTableController<T> {
         String previousLogicalOperator = "";
 
         for (FilterApplied filter : appliedFilters) {
-            if (filter.getAttributeName() != null && !filter.getAttributeName().isEmpty() &&
-                    filter.getQueryOperatorQuery() != null && !filter.getQueryOperatorQuery().isEmpty() &&
-                    filter.getFormattedValue() != null && !filter.getFormattedValue().isEmpty()) {
-
+            if (isValidFilter(filter)) {
                 if (firstCondition && !whereAdded) {
                     queryBuilder.append(" WHERE ");
                     whereAdded = true;
@@ -272,16 +269,30 @@ public class PaginationTableController<T> {
 
                 firstCondition = false;
                 previousLogicalOperator = "AND";
-            } else if (filter.getQueryOperatorQuery() != null && !filter.getQueryOperatorQuery().isEmpty()) {
+            } else if (isLogicalOperator(filter)) {
                 previousLogicalOperator = filter.getQueryOperatorQuery().toUpperCase().trim();
             }
         }
 
+        trimEndingLogicalOperators(queryBuilder);
+
+        return queryBuilder.toString().trim();
+    }
+
+    private boolean isValidFilter(FilterApplied filter) {
+        return filter.getAttributeName() != null && !filter.getAttributeName().isEmpty() &&
+                filter.getQueryOperatorQuery() != null && !filter.getQueryOperatorQuery().isEmpty() &&
+                filter.getFormattedValue() != null && !filter.getFormattedValue().isEmpty();
+    }
+
+    private boolean isLogicalOperator(FilterApplied filter) {
+        return filter.getQueryOperatorQuery() != null && !filter.getQueryOperatorQuery().isEmpty();
+    }
+
+    private void trimEndingLogicalOperators(StringBuilder queryBuilder) {
         String query = queryBuilder.toString().trim();
         if (query.endsWith("AND") || query.endsWith("OR")) {
-            query = query.substring(0, query.length() - 3).trim();
+            queryBuilder.setLength(queryBuilder.length() - 3);
         }
-
-        return query;
     }
 }

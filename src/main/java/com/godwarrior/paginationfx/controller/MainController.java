@@ -28,14 +28,20 @@ public class MainController {
             newTable.initialize(Usuario.class, "usuario");
 
             newTable.addColumn("Identificador", "id");
-            newTable.addColumn("Nombre", "name");
+            newTable.addColumn("Nombre", "nombre");
             newTable.addColumn("Apellido", "apellido");
             newTable.addColumn("Telefono", "telefono");
+            newTable.addColumn("Fecha Nacimiento", "fechaNacimiento");
+            newTable.addColumn("¿Esta activo?", "activo");
+            newTable.addColumn("Hora de Registro", "horaRegistro");
+
 
             newTable.addFilters(new ArrayList<>(Arrays.asList(
                     new Filter("Id de Usuario", "id", "number"),
-                    new Filter("Nombre de Usuario", "name", "text"),
-                    new Filter("Telefono de Usuario", "telefono", "text")
+                    new Filter("Nombre de Usuario", "nombre", "text"),
+                    new Filter("Telefono de Usuario", "telefono", "number"),
+                    new Filter("¿Esta activo?", "activo", "bool")
+
             )));
 
             VBox.setVgrow(paginationTable, Priority.ALWAYS);

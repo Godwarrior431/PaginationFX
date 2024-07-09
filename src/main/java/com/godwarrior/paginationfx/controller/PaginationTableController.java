@@ -5,6 +5,7 @@ import com.godwarrior.paginationfx.models.Filter;
 import com.godwarrior.paginationfx.models.FilterApplied;
 import com.godwarrior.paginationfx.utils.JavaUtils;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -65,9 +66,14 @@ public class PaginationTableController<T> {
         JavaUtils.setImage("/com/godwarrior/paginationfx/resources/icons/backIcon.png", backPageImgView);
         JavaUtils.setImage("/com/godwarrior/paginationfx/resources/icons/nextIcon.png", nextPageImgView);
 
+        filterTableView.setRowFactory(tv -> {
+            TableRow<T> row = new TableRow<>();
+            row.prefHeightProperty().bind(filterTableView.heightProperty().divide(itemsPerPage + 0.70));
+            return row;
+        });
+
         queryBase = "SELECT * FROM " + this.dataBaseTable;
         queryDefault = queryBase;
-
 
         totalItems = MySQLSelect.countRows("SELECT COUNT(*) FROM " + this.dataBaseTable);
         totalPages = (int) Math.ceil((double) totalItems / itemsPerPage);
@@ -84,6 +90,9 @@ public class PaginationTableController<T> {
                 updateButtonStates();
             }
         });
+
+        filterTableView.getItems().addListener((ListChangeListener<T>) change -> updateEmptyState());
+
 
         updateQuery();
         loadPage();
@@ -103,6 +112,7 @@ public class PaginationTableController<T> {
         ObservableList<T> result = MySQLSelect.executeQuery(query, objectType);
         this.filterTableView.setItems(result);
         numberPageTextField.setText(String.valueOf(currentPage));
+        updateEmptyState();
     }
 
     @FXML
@@ -146,8 +156,16 @@ public class PaginationTableController<T> {
     }
 
     private void updateButtonStates() {
-        goNextPageButton.setDisable(currentPage >= totalPages);
-        goBackPageButton.setDisable(currentPage <= 1);
+        goNextPageButton.setDisable(currentPage >= totalPages || filterTableView.getItems().isEmpty());
+        goBackPageButton.setDisable(currentPage <= 1 || filterTableView.getItems().isEmpty());
+    }
+
+    private void updateEmptyState() {
+        boolean isEmpty = filterTableView.getItems().isEmpty();
+        goBackPageButton.setDisable(isEmpty || currentPage <= 1);
+        goNextPageButton.setDisable(isEmpty || currentPage >= totalPages);
+        numberPageTextField.setDisable(isEmpty);
+        pageSelectComboBox.setDisable(isEmpty);
     }
 
     public void addColumn(String columnName, String attributeName) {
@@ -196,6 +214,8 @@ public class PaginationTableController<T> {
             totalItems = MySQLSelect.countRows("SELECT COUNT(*) FROM (" + queryBase + ") AS countQuery");
             totalPages = (int) Math.ceil((double) totalItems / itemsPerPage);
 
+            currentPage = 1;
+
             pageSelectComboBox.getItems().clear();
             pageSelectComboBox.getItems().addAll(IntStream.rangeClosed(1, totalPages).boxed().toList());
             pageSelectComboBox.setValue(currentPage);
@@ -206,7 +226,6 @@ public class PaginationTableController<T> {
 
         }
     }
-
 
     private String buildQueryWithFilters() {
         StringBuilder queryBuilder = new StringBuilder(queryDefault);
@@ -244,7 +263,4 @@ public class PaginationTableController<T> {
 
         return query;
     }
-
-
 }
-

@@ -107,6 +107,9 @@ public class FilterPaneController {
                 CheckBox checkBox = createCheckBox();
                 checkBox.setStyle("-fx-font-size: 15px;");
                 fieldContainer.getChildren().add(checkBox);
+                if (!predicatesComboBox.getItems().isEmpty()) {
+                    predicatesComboBox.getSelectionModel().selectFirst();
+                }
                 break;
             default:
                 throw new IllegalArgumentException("Tipo de dato no válido para los campos: " + type);

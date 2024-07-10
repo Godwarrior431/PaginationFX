@@ -1,6 +1,6 @@
 package com.godwarrior.paginationfx.database.mysql;
 
-import com.godwarrior.paginationfx.utils.JavaUtils;
+import com.godwarrior.paginationfx.utils.JavaUtilsFunctions;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -9,7 +9,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
-public class MySQLSelect {
+public final class MySQLSelect {
 
     public static int countRows(String query) {
         int rowCount = 0;
@@ -45,7 +45,7 @@ public class MySQLSelect {
                 for (Field field : clazz.getDeclaredFields()) {
                     field.setAccessible(true);
 
-                    String columnName = JavaUtils.getColumnLabel(clazz, field.getName());
+                    String columnName = JavaUtilsFunctions.getColumnLabel(clazz, field.getName());
                     if (columnName == null) {
                         columnName = field.getName();
                     }

@@ -51,8 +51,7 @@ public class FilterApplied {
 
     public String getFormattedValue() {
         switch (typeFilter) {
-            case "text":
-            case "date":
+            case "date", "text":
             case "time":
                 return "'" + valueQuery + "'";
             case "number":

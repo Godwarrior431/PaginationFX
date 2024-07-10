@@ -6,7 +6,7 @@ import com.godwarrior.paginationfx.models.Filter;
 import com.godwarrior.paginationfx.models.FilterApplied;
 import com.godwarrior.paginationfx.models.Operator;
 import com.godwarrior.paginationfx.models.Usuario;
-import com.godwarrior.paginationfx.utils.JavaUtils;
+import com.godwarrior.paginationfx.utils.JavaUtilsFunctions;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -57,9 +57,9 @@ public class FilterPaneController {
     public void initialize(List<Filter> filterList, List<FilterApplied> filterAppliedList) {
         this.currentFiltersApplied = filterAppliedList;
 
-        JavaUtils.setImage("/com/godwarrior/paginationfx/resources/icons/addIcon.png", addFilterImgView);
-        JavaUtils.setImage("/com/godwarrior/paginationfx/resources/icons/addFilterIcon.png", filterImgView);
-        JavaUtils.setImage("/com/godwarrior/paginationfx/resources/icons/resetForms.png", resetFilterImgView);
+        JavaUtilsFunctions.setImage("/com/godwarrior/paginationfx/resources/icons/addIcon.png", addFilterImgView);
+        JavaUtilsFunctions.setImage("/com/godwarrior/paginationfx/resources/icons/addFilterIcon.png", filterImgView);
+        JavaUtilsFunctions.setImage("/com/godwarrior/paginationfx/resources/icons/resetForms.png", resetFilterImgView);
 
         ObservableList<Filter> filters = FXCollections.observableArrayList(filterList);
         attributeComboBox.setItems(filters);
@@ -192,7 +192,7 @@ public class FilterPaneController {
         String value = getFieldValue();
 
         if (selectedFilter != null && selectedOperator != null && value != null && !value.isEmpty()) {
-            String attributeLabel = JavaUtils.getColumnLabel(Usuario.class, selectedFilter.getAttributeClassName());
+            String attributeLabel = JavaUtilsFunctions.getColumnLabel(Usuario.class, selectedFilter.getAttributeClassName());
 
             value = switch (selectedOperator.getText().toLowerCase()) {
                 case "starts with" -> value + "%";

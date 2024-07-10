@@ -3,7 +3,7 @@ package com.godwarrior.paginationfx.controller;
 import com.godwarrior.paginationfx.database.mysql.MySQLSelect;
 import com.godwarrior.paginationfx.models.Filter;
 import com.godwarrior.paginationfx.models.FilterApplied;
-import com.godwarrior.paginationfx.utils.JavaUtils;
+import com.godwarrior.paginationfx.utils.JavaUtilsFunctions;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -30,7 +30,7 @@ public class PaginationTableController<T> {
     private String query;
     private String queryDefault;
     private int currentPage = 1;
-    private final int itemsPerPage = 10;
+    private int itemsPerPage = 10;
     private int totalItems = 0;
     private int totalPages = 0;
 
@@ -89,10 +89,10 @@ public class PaginationTableController<T> {
     }
 
     private void initializeImageViews() {
-        JavaUtils.setImage("/com/godwarrior/paginationfx/resources/icons/filterIcon.png", filterImgView);
-        JavaUtils.setImage("/com/godwarrior/paginationfx/resources/icons/resetForms.png", resetFilterImgView);
-        JavaUtils.setImage("/com/godwarrior/paginationfx/resources/icons/backIcon.png", backPageImgView);
-        JavaUtils.setImage("/com/godwarrior/paginationfx/resources/icons/nextIcon.png", nextPageImgView);
+        JavaUtilsFunctions.setImage("/com/godwarrior/paginationfx/resources/icons/filterIcon.png", filterImgView);
+        JavaUtilsFunctions.setImage("/com/godwarrior/paginationfx/resources/icons/resetForms.png", resetFilterImgView);
+        JavaUtilsFunctions.setImage("/com/godwarrior/paginationfx/resources/icons/backIcon.png", backPageImgView);
+        JavaUtilsFunctions.setImage("/com/godwarrior/paginationfx/resources/icons/nextIcon.png", nextPageImgView);
     }
 
     private void initializeTableView() {
@@ -123,7 +123,7 @@ public class PaginationTableController<T> {
         });
     }
 
-    public void addFilters(ArrayList<Filter> listFilters) {
+    public void addFilters(List<Filter> listFilters) {
         this.listFilters = listFilters;
     }
 
@@ -251,15 +251,13 @@ public class PaginationTableController<T> {
     private String buildQueryWithFilters() {
         StringBuilder queryBuilder = new StringBuilder(queryDefault);
         boolean firstCondition = true;
-        boolean whereAdded = false;
         String previousLogicalOperator = "";
 
         for (FilterApplied filter : appliedFilters) {
             if (isValidFilter(filter)) {
-                if (firstCondition && !whereAdded) {
+                if (firstCondition) {
                     queryBuilder.append(" WHERE ");
-                    whereAdded = true;
-                } else if (!firstCondition) {
+                } else {
                     queryBuilder.append(" ").append(previousLogicalOperator).append(" ");
                 }
 
@@ -290,9 +288,17 @@ public class PaginationTableController<T> {
     }
 
     private void trimEndingLogicalOperators(StringBuilder queryBuilder) {
-        String query = queryBuilder.toString().trim();
-        if (query.endsWith("AND") || query.endsWith("OR")) {
+        if (queryBuilder.toString().trim().endsWith("AND") || queryBuilder.toString().trim().endsWith("OR")) {
             queryBuilder.setLength(queryBuilder.length() - 3);
         }
+    }
+
+
+    public int getItemsPerPage() {
+        return itemsPerPage;
+    }
+
+    public void setItemsPerPage(int itemsPerPage) {
+        this.itemsPerPage = itemsPerPage;
     }
 }

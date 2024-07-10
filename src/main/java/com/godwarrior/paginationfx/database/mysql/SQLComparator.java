@@ -5,8 +5,24 @@ import com.godwarrior.paginationfx.models.Operator;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SQLComparator {
+/**
+ * Utility class for SQL comparators.
+ * This class provides static methods to get SQL operators for different data types.
+ * It should not be instantiated.
+ */
+public final class SQLComparator {
 
+    // Private constructor to prevent instantiation
+    private SQLComparator() {
+        throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
+    }
+
+    /**
+     * Returns a list of SQL operators for the given data type.
+     *
+     * @param type the data type (e.g., "text", "number", "date", "time", "bool")
+     * @return a list of SQL operators for the specified data type
+     */
     public static List<Operator> getOperatorsForType(String type) {
         List<Operator> operators = new ArrayList<>();
 

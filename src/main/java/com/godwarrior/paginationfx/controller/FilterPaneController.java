@@ -4,8 +4,8 @@ import com.godwarrior.paginationfx.controller.component.FilterPaneComponentContr
 import com.godwarrior.paginationfx.controller.component.FilterPaneSeparatorController;
 import com.godwarrior.paginationfx.models.Filter;
 import com.godwarrior.paginationfx.models.FilterApplied;
-import com.godwarrior.paginationfx.models.Operator;
-import com.godwarrior.paginationfx.models.Usuario;
+import com.godwarrior.paginationfx.models.ArithmeticOperator;
+import com.godwarrior.paginationfx.application.Usuario;
 import com.godwarrior.paginationfx.utils.JavaUtilsFunctions;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -48,7 +48,7 @@ public class FilterPaneController {
     private ImageView filterImgView;
 
     @FXML
-    private ComboBox<Operator> predicatesComboBox;
+    private ComboBox<ArithmeticOperator> predicatesComboBox;
 
     @FXML
     private ImageView resetFilterImgView;
@@ -76,8 +76,8 @@ public class FilterPaneController {
     }
 
     private void updatePredicatesComboBox(Filter filter) {
-        ObservableList<Operator> operatorTexts = FXCollections.observableArrayList(filter.getOperators());
-        predicatesComboBox.setItems(operatorTexts);
+        ObservableList<ArithmeticOperator> arithmeticOperatorTexts = FXCollections.observableArrayList(filter.getOperators());
+        predicatesComboBox.setItems(arithmeticOperatorTexts);
     }
 
     private void createFieldForType(String type) {
@@ -165,13 +165,14 @@ public class FilterPaneController {
 
         return timeFields;
     }
-
     private CheckBox createCheckBox() {
-        CheckBox checkBox = new CheckBox();
+        CheckBox checkBox = new CheckBox("True");
+        checkBox.setSelected(true);
         checkBox.selectedProperty().addListener((observable, oldValue, newValue) -> checkBox.setText(newValue ? "True" : "False"));
         checkBox.setStyle("-fx-font-size: 17px; -fx-font-weight: bold;");
         return checkBox;
     }
+
 
     public void removeFilterComponent(Pane filterComponent) {
         int index = appliedFilterContainer.getChildren().indexOf(filterComponent);
@@ -188,13 +189,13 @@ public class FilterPaneController {
     @FXML
     void addFilter() {
         Filter selectedFilter = attributeComboBox.getSelectionModel().getSelectedItem();
-        Operator selectedOperator = predicatesComboBox.getSelectionModel().getSelectedItem();
+        ArithmeticOperator selectedArithmeticOperator = predicatesComboBox.getSelectionModel().getSelectedItem();
         String value = getFieldValue();
 
-        if (selectedFilter != null && selectedOperator != null && value != null && !value.isEmpty()) {
-            String attributeLabel = JavaUtilsFunctions.getColumnLabel(Usuario.class, selectedFilter.getAttributeClassName());
+        if (selectedFilter != null && selectedArithmeticOperator != null && value != null && !value.isEmpty()) {
+            String attributeLabel = JavaUtilsFunctions.getColumnLabel(Usuario.class, selectedFilter.getAttributeObjectName());
 
-            value = switch (selectedOperator.getText().toLowerCase()) {
+            value = switch (selectedArithmeticOperator.operatorText().toLowerCase()) {
                 case "starts with" -> value + "%";
                 case "ends with" -> "%" + value;
                 case "contains" -> "%" + value + "%";
@@ -206,9 +207,9 @@ public class FilterPaneController {
             }
             addFilterComponent(new FilterApplied(
                     selectedFilter.getFilterNameSelect(),
-                    attributeLabel != null ? attributeLabel : selectedFilter.getAttributeClassName(),
-                    selectedOperator.getText(),
-                    selectedOperator.getSql(),
+                    attributeLabel != null ? attributeLabel : selectedFilter.getAttributeObjectName(),
+                    selectedArithmeticOperator.operatorText(),
+                    selectedArithmeticOperator.operatorSql(),
                     value,
                     this.attributeComboBox.getSelectionModel().getSelectedItem().getAttributeType()));
         }

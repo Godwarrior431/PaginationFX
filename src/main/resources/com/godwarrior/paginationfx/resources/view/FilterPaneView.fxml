@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<SplitPane dividerPositions="0.5, 0.5" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" orientation="VERTICAL" prefHeight="721.0" prefWidth="655.0" style="-fx-border-color: #677bbc; -fx-border-width: 6; -fx-background-color: #a8a8a8;" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.godwarrior.paginationfx.controller.FilterPaneController">
+<SplitPane dividerPositions="0.5, 0.5" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="600.0" minWidth="-Infinity" orientation="VERTICAL" prefHeight="600.0" prefWidth="655.0" style="-fx-border-color: #677bbc; -fx-border-width: 6; -fx-background-color: #a8a8a8;" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.godwarrior.paginationfx.controller.FilterPaneController">
   <items>
       <VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="168.0" prefWidth="630.0" spacing="2.0" style="-fx-background-color: #687CBC; -fx-border-color: #ffffff;">
          <children>

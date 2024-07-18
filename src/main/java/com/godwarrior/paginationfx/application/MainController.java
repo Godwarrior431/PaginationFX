@@ -1,8 +1,8 @@
-package com.godwarrior.paginationfx.controller;
+package com.godwarrior.paginationfx.application;
 
+import com.godwarrior.paginationfx.controller.PaginationTableController;
 import com.godwarrior.paginationfx.database.mysql.ConnectionMSQL;
 import com.godwarrior.paginationfx.models.Filter;
-import com.godwarrior.paginationfx.models.Usuario;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class MainController {
+
     @FXML
     private VBox vboxContainer;
 

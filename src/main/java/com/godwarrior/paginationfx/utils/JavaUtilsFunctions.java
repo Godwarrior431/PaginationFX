@@ -1,6 +1,6 @@
 package com.godwarrior.paginationfx.utils;
 
-import com.godwarrior.paginationfx.annotation.ColumnName;
+import com.godwarrior.paginationfx.utils.annotation.ColumnName;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 

@@ -5,7 +5,7 @@ public class FilterApplied {
     private String filterNameSelect;
     private String attributeName;
     private String operatorName;
-    private String queryOperatorQuery;
+    private final String queryOperatorQuery;
     private String valueQuery;
     private String typeFilter;
 

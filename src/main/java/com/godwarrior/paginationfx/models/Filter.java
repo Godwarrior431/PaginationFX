@@ -5,34 +5,28 @@ import com.godwarrior.paginationfx.database.mysql.SQLComparator;
 import java.util.List;
 
 public class Filter {
-
-    private String attributeClassName;
-    private String attributeType;
     private String filterNameSelect;
-    private List<Operator> operators;
+    private String attributeObjectName;
+    private final String attributeType;
+    private final List<ArithmeticOperator> arithmeticOperators;
 
-    public Filter(String filterNameSelect, String attributeName, String attributeType) {
+    public Filter(String filterNameSelect, String attributeObjectName, String attributeType) {
         this.filterNameSelect = filterNameSelect;
-        this.attributeClassName = attributeName;
+        this.attributeObjectName = attributeObjectName;
         this.attributeType = attributeType;
-        this.operators = SQLComparator.getOperatorsForType(attributeType);
+        this.arithmeticOperators = SQLComparator.getOperatorsForType(attributeType);
     }
 
-    public String getAttributeClassName() {
-        return attributeClassName;
+    public String getAttributeObjectName() {
+        return attributeObjectName;
     }
 
     public String getAttributeType() {
         return attributeType;
     }
 
-
-    public void setAttributeClassName(String attributeClassName) {
-        this.attributeClassName = attributeClassName;
-    }
-
-    public List<Operator> getOperators() {
-        return operators;
+    public List<ArithmeticOperator> getOperators() {
+        return arithmeticOperators;
     }
 
     @Override
@@ -44,7 +38,4 @@ public class Filter {
         return filterNameSelect;
     }
 
-    public void setFilterNameSelect(String filterNameSelect) {
-        this.filterNameSelect = filterNameSelect;
-    }
 }

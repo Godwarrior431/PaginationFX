@@ -293,12 +293,4 @@ public class PaginationTableController<T> {
         }
     }
 
-
-    public int getItemsPerPage() {
-        return itemsPerPage;
-    }
-
-    public void setItemsPerPage(int itemsPerPage) {
-        this.itemsPerPage = itemsPerPage;
-    }
 }

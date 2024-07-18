@@ -1,6 +1,6 @@
-package com.godwarrior.paginationfx.models;
+package com.godwarrior.paginationfx.application;
 
-import com.godwarrior.paginationfx.annotation.ColumnName;
+import com.godwarrior.paginationfx.utils.annotation.ColumnName;
 
 public class Usuario {
 

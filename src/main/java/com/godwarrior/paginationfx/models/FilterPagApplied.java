@@ -1,6 +1,6 @@
 package com.godwarrior.paginationfx.models;
 
-public class FilterApplied {
+public class FilterPagApplied {
 
     private String filterNameSelect;
     private String attributeName;
@@ -9,7 +9,7 @@ public class FilterApplied {
     private String valueQuery;
     private String typeFilter;
 
-    public FilterApplied(String filterNameSelect, String attributeName, String operatorName, String queryOperatorQuery, String valueQuery, String typeFilter) {
+    public FilterPagApplied(String filterNameSelect, String attributeName, String operatorName, String queryOperatorQuery, String valueQuery, String typeFilter) {
         this.filterNameSelect = filterNameSelect;
         this.queryOperatorQuery = queryOperatorQuery;
         this.operatorName = operatorName;
@@ -18,7 +18,7 @@ public class FilterApplied {
         this.typeFilter = typeFilter;
     }
 
-    public FilterApplied(String queryOperatorQuery) {
+    public FilterPagApplied(String queryOperatorQuery) {
         this.queryOperatorQuery = queryOperatorQuery;
     }
 

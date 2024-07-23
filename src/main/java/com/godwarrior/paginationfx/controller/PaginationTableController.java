@@ -2,8 +2,8 @@ package com.godwarrior.paginationfx.controller;
 
 import com.godwarrior.paginationfx.database.mysql.MySQLSelect;
 import com.godwarrior.paginationfx.models.ColumnPagTable;
-import com.godwarrior.paginationfx.models.Filter;
-import com.godwarrior.paginationfx.models.FilterApplied;
+import com.godwarrior.paginationfx.models.FilterPagApplied;
+import com.godwarrior.paginationfx.models.FilterPagTable;
 import com.godwarrior.paginationfx.utils.JavaUtilsFunctions;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.ListChangeListener;
@@ -35,8 +35,8 @@ public class PaginationTableController<T> {
     private int totalItems = 0;
     private int totalPages = 0;
 
-    private List<Filter> listFilters;
-    private List<FilterApplied> appliedFilters = new ArrayList<>();
+    private List<FilterPagTable> listFilterPagTables;
+    private List<FilterPagApplied> appliedFilters = new ArrayList<>();
 
     private Stage stageAux;
 
@@ -124,8 +124,8 @@ public class PaginationTableController<T> {
         });
     }
 
-    public void addFilters(List<Filter> listFilters) {
-        this.listFilters = listFilters;
+    public void addFilters(List<FilterPagTable> listFilterPagTables) {
+        this.listFilterPagTables = listFilterPagTables;
     }
 
     private void updateQuery() {
@@ -229,7 +229,7 @@ public class PaginationTableController<T> {
             stageAux.initModality(Modality.APPLICATION_MODAL);
 
             FilterPaneController filterPaneController = loader.getController();
-            filterPaneController.initialize(this.listFilters, appliedFilters);
+            filterPaneController.initialize(this.listFilterPagTables, appliedFilters);
 
             stageAux.showAndWait();
             appliedFilters = filterPaneController.getCurrentFiltersApplied();
@@ -256,7 +256,7 @@ public class PaginationTableController<T> {
         boolean firstCondition = true;
         String previousLogicalOperator = "";
 
-        for (FilterApplied filter : appliedFilters) {
+        for (FilterPagApplied filter : appliedFilters) {
             if (isValidFilter(filter)) {
                 if (firstCondition) {
                     queryBuilder.append(" WHERE ");
@@ -280,13 +280,13 @@ public class PaginationTableController<T> {
         return queryBuilder.toString().trim();
     }
 
-    private boolean isValidFilter(FilterApplied filter) {
+    private boolean isValidFilter(FilterPagApplied filter) {
         return filter.getAttributeName() != null && !filter.getAttributeName().isEmpty() &&
                 filter.getQueryOperatorQuery() != null && !filter.getQueryOperatorQuery().isEmpty() &&
                 filter.getFormattedValue() != null && !filter.getFormattedValue().isEmpty();
     }
 
-    private boolean isLogicalOperator(FilterApplied filter) {
+    private boolean isLogicalOperator(FilterPagApplied filter) {
         return filter.getQueryOperatorQuery() != null && !filter.getQueryOperatorQuery().isEmpty();
     }
 

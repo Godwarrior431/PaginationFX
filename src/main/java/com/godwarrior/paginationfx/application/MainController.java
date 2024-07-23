@@ -2,7 +2,7 @@ package com.godwarrior.paginationfx.application;
 
 import com.godwarrior.paginationfx.database.mysql.ConnectionMSQL;
 import com.godwarrior.paginationfx.models.ColumnPagTable;
-import com.godwarrior.paginationfx.models.Filter;
+import com.godwarrior.paginationfx.models.FilterPagTable;
 import com.godwarrior.paginationfx.utils.TableViewPaginated;
 import javafx.fxml.FXML;
 import javafx.scene.layout.Priority;
@@ -33,12 +33,12 @@ public class MainController {
             ));
 
             paginatedTableView.addFilters(Arrays.asList(
-                    new Filter("Id de Usuario", "id", "number"),
-                    new Filter("Nombre de Usuario", "nombre", "text"),
-                    new Filter("Telefono de Usuario", "telefono", "number"),
-                    new Filter("¿Esta activo?", "activo", "bool"),
-                    new Filter("Fecha de Nacimiento", "fechaNacimiento", "date"),
-                    new Filter("Horario de Registro", "horaRegistro", "time")
+                    new FilterPagTable("Id de Usuario", "id", "number"),
+                    new FilterPagTable("Nombre de Usuario", "nombre", "text"),
+                    new FilterPagTable("Telefono de Usuario", "telefono", "number"),
+                    new FilterPagTable("¿Esta activo?", "activo", "bool"),
+                    new FilterPagTable("Fecha de Nacimiento", "fechaNacimiento", "date"),
+                    new FilterPagTable("Horario de Registro", "horaRegistro", "time")
             ));
 
             VBox.setVgrow(paginatedTableView.getPaginationTable(), Priority.ALWAYS);

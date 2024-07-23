@@ -1,11 +1,11 @@
 package com.godwarrior.paginationfx.controller;
 
+import com.godwarrior.paginationfx.application.Usuario;
 import com.godwarrior.paginationfx.controller.component.FilterPaneComponentController;
 import com.godwarrior.paginationfx.controller.component.FilterPaneSeparatorController;
-import com.godwarrior.paginationfx.models.Filter;
-import com.godwarrior.paginationfx.models.FilterApplied;
 import com.godwarrior.paginationfx.models.ArithmeticOperator;
-import com.godwarrior.paginationfx.application.Usuario;
+import com.godwarrior.paginationfx.models.FilterPagApplied;
+import com.godwarrior.paginationfx.models.FilterPagTable;
 import com.godwarrior.paginationfx.utils.JavaUtilsFunctions;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
 
 public class FilterPaneController {
 
-    private List<FilterApplied> currentFiltersApplied = new ArrayList<>();
+    private List<FilterPagApplied> currentFiltersApplied = new ArrayList<>();
 
     @FXML
     private ImageView addFilterImgView;
@@ -42,7 +42,7 @@ public class FilterPaneController {
     private VBox appliedFilterContainer;
 
     @FXML
-    private ComboBox<Filter> attributeComboBox;
+    private ComboBox<FilterPagTable> attributeComboBox;
 
     @FXML
     private ImageView filterImgView;
@@ -54,15 +54,15 @@ public class FilterPaneController {
     private ImageView resetFilterImgView;
 
     @FXML
-    public void initialize(List<Filter> filterList, List<FilterApplied> filterAppliedList) {
-        this.currentFiltersApplied = filterAppliedList;
+    public void initialize(List<FilterPagTable> filterPagTableList, List<FilterPagApplied> filterPagAppliedList) {
+        this.currentFiltersApplied = filterPagAppliedList;
 
         JavaUtilsFunctions.setImage("/com/godwarrior/paginationfx/resources/icons/addIcon.png", addFilterImgView);
         JavaUtilsFunctions.setImage("/com/godwarrior/paginationfx/resources/icons/addFilterIcon.png", filterImgView);
         JavaUtilsFunctions.setImage("/com/godwarrior/paginationfx/resources/icons/resetForms.png", resetFilterImgView);
 
-        ObservableList<Filter> filters = FXCollections.observableArrayList(filterList);
-        attributeComboBox.setItems(filters);
+        ObservableList<FilterPagTable> filterPagTables = FXCollections.observableArrayList(filterPagTableList);
+        attributeComboBox.setItems(filterPagTables);
 
         attributeComboBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
@@ -75,8 +75,8 @@ public class FilterPaneController {
         fillAppliedFilters();
     }
 
-    private void updatePredicatesComboBox(Filter filter) {
-        ObservableList<ArithmeticOperator> arithmeticOperatorTexts = FXCollections.observableArrayList(filter.getOperators());
+    private void updatePredicatesComboBox(FilterPagTable filterPagTable) {
+        ObservableList<ArithmeticOperator> arithmeticOperatorTexts = FXCollections.observableArrayList(filterPagTable.getOperators());
         predicatesComboBox.setItems(arithmeticOperatorTexts);
     }
 
@@ -165,6 +165,7 @@ public class FilterPaneController {
 
         return timeFields;
     }
+
     private CheckBox createCheckBox() {
         CheckBox checkBox = new CheckBox("True");
         checkBox.setSelected(true);
@@ -188,12 +189,12 @@ public class FilterPaneController {
 
     @FXML
     void addFilter() {
-        Filter selectedFilter = attributeComboBox.getSelectionModel().getSelectedItem();
+        FilterPagTable selectedFilterPagTable = attributeComboBox.getSelectionModel().getSelectedItem();
         ArithmeticOperator selectedArithmeticOperator = predicatesComboBox.getSelectionModel().getSelectedItem();
         String value = getFieldValue();
 
-        if (selectedFilter != null && selectedArithmeticOperator != null && value != null && !value.isEmpty()) {
-            String attributeLabel = JavaUtilsFunctions.getColumnLabel(Usuario.class, selectedFilter.getAttributeObjectName());
+        if (selectedFilterPagTable != null && selectedArithmeticOperator != null && value != null && !value.isEmpty()) {
+            String attributeLabel = JavaUtilsFunctions.getColumnLabel(Usuario.class, selectedFilterPagTable.getAttributeObjectName());
 
             value = switch (selectedArithmeticOperator.operatorText().toLowerCase()) {
                 case "starts with" -> value + "%";
@@ -205,9 +206,9 @@ public class FilterPaneController {
             if (!appliedFilterContainer.getChildren().isEmpty()) {
                 addSeparator(null);
             }
-            addFilterComponent(new FilterApplied(
-                    selectedFilter.getFilterNameSelect(),
-                    attributeLabel != null ? attributeLabel : selectedFilter.getAttributeObjectName(),
+            addFilterComponent(new FilterPagApplied(
+                    selectedFilterPagTable.getFilterNameSelect(),
+                    attributeLabel != null ? attributeLabel : selectedFilterPagTable.getAttributeObjectName(),
                     selectedArithmeticOperator.operatorText(),
                     selectedArithmeticOperator.operatorSql(),
                     value,
@@ -215,14 +216,14 @@ public class FilterPaneController {
         }
     }
 
-    private void addFilterComponent(FilterApplied filterApplied) {
+    private void addFilterComponent(FilterPagApplied filterPagApplied) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/godwarrior/paginationfx/resources/view/component/FilterPaneComponentView.fxml"));
             Pane filterComponent = loader.load();
 
             FilterPaneComponentController componentController = loader.getController();
             componentController.setParentController(this);
-            componentController.initialize(filterApplied);
+            componentController.initialize(filterPagApplied);
 
             filterComponent.getProperties().put("controller", componentController);
 
@@ -275,11 +276,11 @@ public class FilterPaneController {
 
     private void fillAppliedFilters() {
         if (currentFiltersApplied != null && !currentFiltersApplied.isEmpty()) {
-            for (FilterApplied filterApplied : currentFiltersApplied) {
-                if ("AND".equals(filterApplied.getQueryOperatorQuery()) || "OR".equals(filterApplied.getQueryOperatorQuery())) {
-                    addSeparator(filterApplied.getQueryOperatorQuery());
+            for (FilterPagApplied filterPagApplied : currentFiltersApplied) {
+                if ("AND".equals(filterPagApplied.getQueryOperatorQuery()) || "OR".equals(filterPagApplied.getQueryOperatorQuery())) {
+                    addSeparator(filterPagApplied.getQueryOperatorQuery());
                 } else {
-                    addFilterComponent(filterApplied);
+                    addFilterComponent(filterPagApplied);
                 }
             }
         }
@@ -291,15 +292,15 @@ public class FilterPaneController {
 
         for (Node node : appliedFilterContainer.getChildren()) {
             if (node instanceof Pane && node.getProperties().get("controller") instanceof FilterPaneComponentController componentController) {
-                FilterApplied filterApplied = componentController.getFilterApplied();
-                if (filterApplied != null) {
-                    currentFiltersApplied.add(filterApplied);
+                FilterPagApplied filterPagApplied = componentController.getFilterApplied();
+                if (filterPagApplied != null) {
+                    currentFiltersApplied.add(filterPagApplied);
                 }
             } else if (node instanceof HBox && node.getProperties().get("controller") instanceof FilterPaneSeparatorController separatorController) {
                 if (separatorController.getAndCheckBox().isSelected()) {
-                    currentFiltersApplied.add(new FilterApplied("AND"));
+                    currentFiltersApplied.add(new FilterPagApplied("AND"));
                 } else if (separatorController.getOrCheckBox().isSelected()) {
-                    currentFiltersApplied.add(new FilterApplied("OR"));
+                    currentFiltersApplied.add(new FilterPagApplied("OR"));
                 }
             }
         }
@@ -307,7 +308,7 @@ public class FilterPaneController {
         stage.close();
     }
 
-    public List<FilterApplied> getCurrentFiltersApplied() {
+    public List<FilterPagApplied> getCurrentFiltersApplied() {
         return currentFiltersApplied;
     }
 

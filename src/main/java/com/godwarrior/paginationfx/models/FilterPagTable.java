@@ -4,13 +4,13 @@ import com.godwarrior.paginationfx.database.mysql.SQLComparator;
 
 import java.util.List;
 
-public class Filter {
+public class FilterPagTable {
     private String filterNameSelect;
     private String attributeObjectName;
     private final String attributeType;
     private final List<ArithmeticOperator> arithmeticOperators;
 
-    public Filter(String filterNameSelect, String attributeObjectName, String attributeType) {
+    public FilterPagTable(String filterNameSelect, String attributeObjectName, String attributeType) {
         this.filterNameSelect = filterNameSelect;
         this.attributeObjectName = attributeObjectName;
         this.attributeType = attributeType;

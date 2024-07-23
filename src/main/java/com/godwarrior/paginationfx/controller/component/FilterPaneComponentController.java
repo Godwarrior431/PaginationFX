@@ -1,7 +1,7 @@
 package com.godwarrior.paginationfx.controller.component;
 
 import com.godwarrior.paginationfx.controller.FilterPaneController;
-import com.godwarrior.paginationfx.models.FilterApplied;
+import com.godwarrior.paginationfx.models.FilterPagApplied;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -29,17 +29,17 @@ public class FilterPaneComponentController {
     private Label valueTextLabel;
 
     @FXML
-    private FilterApplied filterApplied;
+    private FilterPagApplied filterPagApplied;
 
     @FXML
-    public void initialize(FilterApplied filterApplied) {
-        this.filterApplied = filterApplied;
+    public void initialize(FilterPagApplied filterPagApplied) {
+        this.filterPagApplied = filterPagApplied;
         deleteImgView.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/com/godwarrior/paginationfx/resources/icons/deleteIcon.png"))));
 
-        filterNameSelectLabel.setText(filterApplied.getFilterNameSelect());
-        operatorLabel.setText(filterApplied.getOperatorName());
+        filterNameSelectLabel.setText(filterPagApplied.getFilterNameSelect());
+        operatorLabel.setText(filterPagApplied.getOperatorName());
 
-        String valueQuery = filterApplied.getValueQuery();
+        String valueQuery = filterPagApplied.getValueQuery();
 
         if (valueQuery != null) {
             while (valueQuery.startsWith("%")) {
@@ -65,8 +65,8 @@ public class FilterPaneComponentController {
         parentController.removeFilterComponent(filterComponent);
     }
 
-    public FilterApplied getFilterApplied() {
-        return filterApplied;
+    public FilterPagApplied getFilterApplied() {
+        return filterPagApplied;
     }
 
 }

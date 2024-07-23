@@ -2,7 +2,7 @@ package com.godwarrior.paginationfx.utils;
 
 import com.godwarrior.paginationfx.controller.PaginationTableController;
 import com.godwarrior.paginationfx.models.ColumnPagTable;
-import com.godwarrior.paginationfx.models.Filter;
+import com.godwarrior.paginationfx.models.FilterPagTable;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 
@@ -27,8 +27,8 @@ public class TableViewPaginated<T> {
         controller.addColumns(columns);
     }
 
-    public void addFilters(List<Filter> filters) {
-        controller.addFilters(filters);
+    public void addFilters(List<FilterPagTable> filterPagTables) {
+        controller.addFilters(filterPagTables);
     }
 
     public Node getPaginationTable() {

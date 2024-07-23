@@ -1,6 +1,7 @@
 package com.godwarrior.paginationfx.controller;
 
 import com.godwarrior.paginationfx.database.mysql.MySQLSelect;
+import com.godwarrior.paginationfx.models.ColumnPagTable;
 import com.godwarrior.paginationfx.models.Filter;
 import com.godwarrior.paginationfx.models.FilterApplied;
 import com.godwarrior.paginationfx.utils.JavaUtilsFunctions;
@@ -191,20 +192,22 @@ public class PaginationTableController<T> {
         pageSelectComboBox.setDisable(isEmpty);
     }
 
-    public void addColumn(String columnName, String attributeName) {
-        TableColumn<T, String> column = new TableColumn<>(columnName);
-        column.setCellValueFactory(cellData -> {
-            try {
-                Field field = cellData.getValue().getClass().getDeclaredField(attributeName);
-                field.setAccessible(true);
-                return new SimpleStringProperty(String.valueOf(field.get(cellData.getValue())));
-            } catch (ReflectiveOperationException e) {
-                e.printStackTrace();
-                return new SimpleStringProperty("Error");
-            }
-        });
+    public void addColumns(List<ColumnPagTable> columns) {
+        for (ColumnPagTable column : columns) {
+            TableColumn<T, String> tableColumn = new TableColumn<>(column.getColumnName());
+            tableColumn.setCellValueFactory(cellData -> {
+                try {
+                    Field field = cellData.getValue().getClass().getDeclaredField(column.getAttributeName());
+                    field.setAccessible(true);
+                    return new SimpleStringProperty(String.valueOf(field.get(cellData.getValue())));
+                } catch (ReflectiveOperationException e) {
+                    e.printStackTrace();
+                    return new SimpleStringProperty("Error");
+                }
+            });
 
-        filterTableView.getColumns().add(column);
+            filterTableView.getColumns().add(tableColumn);
+        }
     }
 
     @FXML

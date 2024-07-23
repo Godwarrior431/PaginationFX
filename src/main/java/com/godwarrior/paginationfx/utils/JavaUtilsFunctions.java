@@ -1,6 +1,6 @@
 package com.godwarrior.paginationfx.utils;
 
-import com.godwarrior.paginationfx.utils.annotation.ColumnName;
+import com.godwarrior.paginationfx.utils.annotation.ColumnNameDB;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
@@ -34,9 +34,9 @@ public final class JavaUtilsFunctions {
     public static String getColumnLabel(Class<?> clazz, String fieldName) {
         try {
             Field field = clazz.getDeclaredField(fieldName);
-            if (field.isAnnotationPresent(ColumnName.class)) {
-                ColumnName columnName = field.getAnnotation(ColumnName.class);
-                return columnName.name();
+            if (field.isAnnotationPresent(ColumnNameDB.class)) {
+                ColumnNameDB columnNameDB = field.getAnnotation(ColumnNameDB.class);
+                return columnNameDB.name();
             }
         } catch (NoSuchFieldException e) {
             logger.warning("Field not found: " + fieldName);

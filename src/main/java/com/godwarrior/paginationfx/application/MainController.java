@@ -20,9 +20,9 @@ public class MainController {
         try {
             ConnectionMSQL.getInstance("localhost", "paginationtest", "root", "");
 
-            TableViewPaginated<Usuario> paginatedTableView = new TableViewPaginated<>(Usuario.class, "usuario");
+            TableViewPaginated<Usuario> NewPaginatedTable = new TableViewPaginated<>(Usuario.class, "usuario");
 
-            paginatedTableView.addColumns(Arrays.asList(
+            NewPaginatedTable.addColumns(Arrays.asList(
                     new ColumnPagTable("Identificador", "id"),
                     new ColumnPagTable("Nombre", "nombre"),
                     new ColumnPagTable("Apellido", "apellido"),
@@ -32,7 +32,7 @@ public class MainController {
                     new ColumnPagTable("Hora de Registro", "horaRegistro")
             ));
 
-            paginatedTableView.addFilters(Arrays.asList(
+            NewPaginatedTable.addFilters(Arrays.asList(
                     new FilterPagTable("Id de Usuario", "id", "number"),
                     new FilterPagTable("Nombre de Usuario", "nombre", "text"),
                     new FilterPagTable("Telefono de Usuario", "telefono", "number"),
@@ -41,8 +41,8 @@ public class MainController {
                     new FilterPagTable("Horario de Registro", "horaRegistro", "time")
             ));
 
-            VBox.setVgrow(paginatedTableView.getPaginationTable(), Priority.ALWAYS);
-            vboxContainer.getChildren().add(paginatedTableView.getPaginationTable());
+            VBox.setVgrow(NewPaginatedTable.getPaginationTable(), Priority.ALWAYS);
+            vboxContainer.getChildren().add(NewPaginatedTable.getPaginationTable());
 
         } catch (Exception e) {
             e.printStackTrace();

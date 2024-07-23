@@ -83,6 +83,12 @@ public class PaginationTableController<T> {
 
         filterTableView.getItems().addListener((ListChangeListener<T>) change -> updateEmptyState());
 
+        filterTableView.setStyle(
+                "-fx-alignment: CENTER; " +
+                        "-fx-font-size: 14px; " +
+                        "-fx-font-family: 'Arial';" // Ajusta según tus preferencias
+        );
+
         updateQuery();
         loadPage();
         updateButtonStates();

@@ -1,40 +1,40 @@
 package com.godwarrior.paginationfx.application;
 
-import com.godwarrior.paginationfx.utils.annotation.ColumnName;
+import com.godwarrior.paginationfx.utils.annotation.ColumnNameDB;
 
 public class Usuario {
 
-    @ColumnName(name = "id")
+    @ColumnNameDB(name = "id")
     private long id;
 
-    @ColumnName(name = "nombre")
+    @ColumnNameDB(name = "nombre")
     private String nombre;
 
-    @ColumnName(name = "apellido")
+    @ColumnNameDB(name = "apellido")
     private String apellido;
 
-    @ColumnName(name = "email")
+    @ColumnNameDB(name = "email")
     private String email;
 
-    @ColumnName(name = "fecha_nacimiento")
+    @ColumnNameDB(name = "fecha_nacimiento")
     private java.sql.Date fechaNacimiento;
 
-    @ColumnName(name = "telefono")
+    @ColumnNameDB(name = "telefono")
     private String telefono;
 
-    @ColumnName(name = "direccion")
+    @ColumnNameDB(name = "direccion")
     private String direccion;
 
-    @ColumnName(name = "ciudad")
+    @ColumnNameDB(name = "ciudad")
     private String ciudad;
 
-    @ColumnName(name = "pais")
+    @ColumnNameDB(name = "pais")
     private String pais;
 
-    @ColumnName(name = "activo")
+    @ColumnNameDB(name = "activo")
     private boolean activo;
 
-    @ColumnName(name = "hora_registro")
+    @ColumnNameDB(name = "hora_registro")
     private java.sql.Time horaRegistro;
 
     // Getters y Setters

@@ -3,7 +3,17 @@
 It’s a small library for JavaFX applications that allows you to create tables with built-in pagination and customized
 filters.
 
-## System Requirements
+### Supports a Large Number of Elements per Table
+![Gif 1](src/main/resources/com/godwarrior/paginationfx/resources/assetsGit/Gif1.gif)
+
+### Enables Element Filtering
+![Gif 2](src/main/resources/com/godwarrior/paginationfx/resources/assetsGit/Gif2.gif)
+
+### Allows Adding One or More Filters Simultaneously and Grouping Them with AND and OR
+
+![Gif 3](src/main/resources/com/godwarrior/paginationfx/resources/assetsGit/Gif3.gif)
+
+## Requirements
 
 + JDK (Java Development Kit): Version 17 or higher. The JDK provides the necessary tools and libraries for Java
   development.

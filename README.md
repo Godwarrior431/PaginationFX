@@ -64,7 +64,7 @@ Next, we initialize a new paginated table by specifying the type of object we ar
 database table where the object is stored:
 
 ```java
-TableViewPaginated<User> NewPaginatedTable = new TableViewPaginated<>(Usuario.class, "user");
+TableViewPaginated<Usuario> NewPaginatedTable = new TableViewPaginated<>(Usuario.class, "user");
 ```
 
 Then, we'll add the columns we want to display in our table by specifying the column names and the attributes of the

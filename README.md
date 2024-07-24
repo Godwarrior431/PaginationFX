@@ -106,3 +106,6 @@ application:
 vboxContainer.getChildren().add(NewPaginatedTable.getPaginationTable());
 ```
 
+### License
+
+[MIT](LICENSE)
